@@ -11,6 +11,7 @@ import 'package:mapbox_maps_example/map_interface.dart';
 import 'package:mapbox_maps_example/polygon_annotations.dart';
 import 'package:mapbox_maps_example/polyline_annotations.dart';
 import 'package:mapbox_maps_example/traffic-route-line.dart';
+import 'package:mapbox_maps_example/snapshot.dart';
 import 'package:mapbox_maps_example/tile_json.dart';
 import 'package:mapbox_maps_example/vector_tile_source.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -44,6 +45,7 @@ final List<ExamplePage> _allPages = <ExamplePage>[
   OrnamentsPage(),
   AnimatedRoutePage(),
   TrafficRouteLinePage(),
+  SnapshotPage(),
 ];
 
 class MapsDemo extends StatelessWidget {
