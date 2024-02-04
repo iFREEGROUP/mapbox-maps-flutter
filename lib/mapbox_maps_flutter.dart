@@ -31,6 +31,7 @@ part 'src/pigeons/circle_annotation_messager.dart';
 part 'src/pigeons/point_annotation_messager.dart';
 part 'src/pigeons/polygon_annotation_messager.dart';
 part 'src/pigeons/polyline_annotation_messager.dart';
+part 'src/pigeons/view_annotation.dart';
 part 'src/pigeons/map_interfaces.dart';
 part 'src/pigeons/settings.dart';
 part 'src/pigeons/gesture_listeners.dart';

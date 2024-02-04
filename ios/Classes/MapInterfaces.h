@@ -127,34 +127,6 @@ typedef NS_ENUM(NSUInteger, FLTMapDebugOptionsData) {
 - (instancetype)initWithValue:(FLTMapDebugOptionsData)value;
 @end
 
-/// Enum describing how to place view annotation relatively to geometry.
-typedef NS_ENUM(NSUInteger, FLTViewAnnotationAnchor) {
-  /// The top of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorTOP = 0,
-  /// The left side of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorLEFT = 1,
-  /// The bottom of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorBOTTOM = 2,
-  /// The right side of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorRIGHT = 3,
-  /// The top-left corner of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorTOP_LEFT = 4,
-  /// The bottom-right corner of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorBOTTOM_RIGHT = 5,
-  /// The top-right corner of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorTOP_RIGHT = 6,
-  /// The bottom-left corner of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorBOTTOM_LEFT = 7,
-  /// The center of the view annotation is placed closest to the geometry.
-  FLTViewAnnotationAnchorCENTER = 8,
-};
-
-/// Wrapper for FLTViewAnnotationAnchor to allow for nullability.
-@interface FLTViewAnnotationAnchorBox : NSObject
-@property(nonatomic, assign) FLTViewAnnotationAnchor value;
-- (instancetype)initWithValue:(FLTViewAnnotationAnchor)value;
-@end
-
 /// Type information of the variant's content
 typedef NS_ENUM(NSUInteger, FLTType) {
   FLTTypeSCREEN_BOX = 0,

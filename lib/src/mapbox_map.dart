@@ -186,6 +186,10 @@ class MapboxMap extends ChangeNotifier {
   /// snapshot manager
   late _SnapShotManager snapshotter = _SnapShotManager(binaryMessenger: _proxyBinaryMessenger);
 
+  /// view annotation
+  late ViewAnnotationManager viewAnnotationManager =
+      ViewAnnotationManager(binaryMessenger: _proxyBinaryMessenger);
+
   @override
   void dispose() {
     super.dispose();

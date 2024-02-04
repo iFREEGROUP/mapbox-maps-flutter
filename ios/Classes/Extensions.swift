@@ -711,3 +711,123 @@ extension MapboxMaps.CameraState {
         )
     }
 }
+
+extension FLTAnnotatedFeature {
+    func toAnnotatedFeature() -> MapboxMaps.AnnotatedFeature? {
+        var annotatedFeature: MapboxMaps.AnnotatedFeature?
+        switch type {
+        case .GEOMETRY:
+            let geometry = value as! [String: Any]?
+            if let data = convertDictionaryToCLLocationCoordinate2D(dict: geometry) {
+                annotatedFeature = AnnotatedFeature.geometry(Point(data))
+            }
+        case .ANNOTATED_LAYER_FEATURE:
+            let layerFeature = value as! FLTAnnotatedLayerFeature
+            annotatedFeature = AnnotatedFeature.layerFeature(layerId: layerFeature.layerId, featureId: layerFeature.featureId)
+        @unknown default:
+            annotatedFeature = nil
+        }
+        return annotatedFeature
+    }
+}
+
+extension FLTViewAnnotationAnchorConfig {
+    func toViewAnnotationAnchorConfig() -> MapboxMaps.ViewAnnotationAnchorConfig {
+        var viewAnchor: ViewAnnotationAnchor
+        switch anchor {
+        case .CENTER:
+            viewAnchor = ViewAnnotationAnchor.center
+        case .TOP:
+            viewAnchor = ViewAnnotationAnchor.top
+        case .LEFT:
+            viewAnchor = ViewAnnotationAnchor.left
+        case .BOTTOM:
+            viewAnchor = ViewAnnotationAnchor.bottom
+        case .RIGHT:
+            viewAnchor = ViewAnnotationAnchor.right
+        case .TOP_LEFT:
+            viewAnchor = ViewAnnotationAnchor.topLeft
+        case .BOTTOM_RIGHT:
+            viewAnchor = ViewAnnotationAnchor.bottomRight
+        case .TOP_RIGHT:
+            viewAnchor = ViewAnnotationAnchor.topRight
+        case .BOTTOM_LEFT:
+            viewAnchor = ViewAnnotationAnchor.bottomLeft
+        @unknown default:
+            viewAnchor = ViewAnnotationAnchor.center
+        }
+        return ViewAnnotationAnchorConfig(anchor: viewAnchor,offsetX: offsetX,offsetY: offsetY)
+    }
+}
+
+extension MapboxMaps.ViewAnnotationAnchorConfig {
+    func toFLTViewAnnotationAnchorConfig() -> FLTViewAnnotationAnchorConfig {
+        var viewAnchor: FLTViewAnnotationAnchor
+        switch anchor {
+        case .center:
+            viewAnchor = FLTViewAnnotationAnchor.CENTER
+        case .top:
+            viewAnchor = FLTViewAnnotationAnchor.TOP
+        case .left:
+            viewAnchor = FLTViewAnnotationAnchor.LEFT
+        case .bottom:
+            viewAnchor = FLTViewAnnotationAnchor.BOTTOM
+        case .right:
+            viewAnchor = FLTViewAnnotationAnchor.RIGHT
+        case .topLeft:
+            viewAnchor = FLTViewAnnotationAnchor.TOP_LEFT
+        case .bottomRight:
+            viewAnchor = FLTViewAnnotationAnchor.BOTTOM_RIGHT
+        case .topRight:
+            viewAnchor = FLTViewAnnotationAnchor.TOP_RIGHT
+        case .bottomLeft:
+            viewAnchor = FLTViewAnnotationAnchor.BOTTOM_LEFT
+        @unknown default:
+            viewAnchor = FLTViewAnnotationAnchor.CENTER
+        }
+        return FLTViewAnnotationAnchorConfig.make(with: viewAnchor, offsetX: offsetX, offsetY: offsetY)
+    }
+}
+
+extension FLTViewAnnotationOptions {
+    func toViewAnnotion(uiImage: UIImage) -> ViewAnnotation? {
+        let feature = annotatedFeature?.toAnnotatedFeature()
+        if feature == nil {
+            return nil
+        }
+        
+        let view = UIImageView(image: uiImage)
+        if width != nil && height != nil {
+            print("width is \(width), height is \(height)")
+            view.frame = CGRect(x: 0, y: 0, width: width!.doubleValue, height: height!.doubleValue)
+        }
+        
+        let annotation = ViewAnnotation(annotatedFeature: feature!, view: view)
+        annotation.allowOverlap = Bool(truncating: allowOverlap ?? 0)
+        annotation.allowOverlapWithPuck = Bool(truncating: allowOverlapWithPuck ?? 0)
+        annotation.annotatedFeature = feature!
+        annotation.ignoreCameraPadding = Bool(truncating: ignoreCameraPadding ?? 0)
+        annotation.selected = Bool(truncating: selected ?? 0)
+        annotation.visible = Bool(truncating: visible ?? 1)
+        annotation.setNeedsUpdateSize()
+        if let variableAnchors = variableAnchors {
+            annotation.variableAnchors = variableAnchors.compactMap({ item in
+                item.toViewAnnotationAnchorConfig()
+            })
+        }
+        return annotation
+    }
+}
+
+extension ViewAnnotation {
+    func toFLTViewAnnotationOptions() -> FLTViewAnnotationOptions {
+        var fLTAnnotatedFeature: FLTAnnotatedFeature
+        if let geometry = annotatedFeature.geometry {
+            fLTAnnotatedFeature = FLTAnnotatedFeature.make(withValue: geometry.toMap(), type: FLTAnnotatedFeatureType.GEOMETRY)
+        } else {
+            let layerFeature = annotatedFeature.layerFeature!
+            fLTAnnotatedFeature = FLTAnnotatedFeature.make(withValue: FLTAnnotatedLayerFeature.make(withLayerId: layerFeature.layerId, featureId: layerFeature.featureId), type: FLTAnnotatedFeatureType.ANNOTATED_LAYER_FEATURE)
+        }
+        return FLTViewAnnotationOptions.make(with: fLTAnnotatedFeature, width: NSNumber(floatLiteral: view.frame.width), height: NSNumber(floatLiteral: view.frame.height), allowOverlap: NSNumber(booleanLiteral: allowOverlap), allowOverlapWithPuck: NSNumber(booleanLiteral: allowOverlapWithPuck), visible: NSNumber(booleanLiteral: visible), variableAnchors: variableAnchors.map({ item in item.toFLTViewAnnotationAnchorConfig()}), selected: NSNumber(booleanLiteral: selected), ignoreCameraPadding: NSNumber(booleanLiteral: ignoreCameraPadding))
+    }
+}

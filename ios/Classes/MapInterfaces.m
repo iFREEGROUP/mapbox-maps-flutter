@@ -94,17 +94,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-/// Enum describing how to place view annotation relatively to geometry.
-@implementation FLTViewAnnotationAnchorBox
-- (instancetype)initWithValue:(FLTViewAnnotationAnchor)value {
-  self = [super init];
-  if (self) {
-    _value = value;
-  }
-  return self;
-}
-@end
-
 /// Type information of the variant's content
 @implementation FLTTypeBox
 - (instancetype)initWithValue:(FLTType)value {

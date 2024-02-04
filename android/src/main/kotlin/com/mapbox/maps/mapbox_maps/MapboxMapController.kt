@@ -26,6 +26,7 @@ import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.mapbox_maps.annotation.AnnotationController
+import com.mapbox.maps.mapbox_maps.annotation.ViewAnnotationController
 import com.mapbox.maps.mapbox_maps.snapshot.SnapshotController
 import com.mapbox.maps.pigeons.FLTMapInterfaces
 import com.mapbox.maps.pigeons.FLTSettings
@@ -64,6 +65,7 @@ class MapboxMapController(
   private val scaleBarController = ScaleBarController(mapView)
   private val compassController = CompassController(mapView)
   private val snapshotController = SnapshotController(mapView,context)
+  private val viewAnnotationController: ViewAnnotationController = ViewAnnotationController(context, mapView)
 
   private val proxyBinaryMessenger = ProxyBinaryMessenger(messenger, "/map_$channelSuffix")
   private val gson = GsonBuilder()
@@ -86,6 +88,7 @@ class MapboxMapController(
     FLTSettings.ScaleBarSettingsInterface.setUp(proxyBinaryMessenger, scaleBarController)
     FLTSettings.CompassSettingsInterface.setUp(proxyBinaryMessenger, compassController)
     snapshotController.setup(proxyBinaryMessenger)
+    viewAnnotationController.setup(proxyBinaryMessenger)
 
     methodChannel = MethodChannel(proxyBinaryMessenger, "plugins.flutter.io")
     methodChannel.setMethodCallHandler(this)
@@ -165,6 +168,7 @@ class MapboxMapController(
     FLTSettings.ScaleBarSettingsInterface.setUp(proxyBinaryMessenger, null)
     FLTSettings.AttributionSettingsInterface.setUp(proxyBinaryMessenger, null)
     snapshotController.dispose(proxyBinaryMessenger)
+    viewAnnotationController.dispose(proxyBinaryMessenger)
   }
 
   override fun onStart(owner: LifecycleOwner) {

@@ -14,6 +14,7 @@ import 'package:mapbox_maps_example/traffic-route-line.dart';
 import 'package:mapbox_maps_example/snapshot.dart';
 import 'package:mapbox_maps_example/tile_json.dart';
 import 'package:mapbox_maps_example/vector_tile_source.dart';
+import 'package:mapbox_maps_example/view_annotation.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'full_map.dart';
@@ -46,6 +47,7 @@ final List<ExamplePage> _allPages = <ExamplePage>[
   AnimatedRoutePage(),
   TrafficRouteLinePage(),
   SnapshotPage(),
+  ViewAnnotationPage(),
 ];
 
 class MapsDemo extends StatelessWidget {
@@ -56,7 +58,8 @@ class MapsDemo extends StatelessWidget {
   //
   // Alternatively you can replace `String.fromEnvironment("ACCESS_TOKEN")`
   // in the following line with your access token directly.
-  static const String ACCESS_TOKEN = String.fromEnvironment("ACCESS_TOKEN");
+  // static const String ACCESS_TOKEN = String.fromEnvironment("ACCESS_TOKEN");
+  static const String ACCESS_TOKEN = "pk.eyJ1IjoiaWZyZWVncm91cCIsImEiOiJja3VqbGZhY2wxcmZ2MzJudnY4Zmg5aWd4In0.0CaWFNDl1UpWX9OlTb1oaA";
 
   void _pushPage(BuildContext context, ExamplePage page) async {
     Navigator.of(context).push(MaterialPageRoute<void>(

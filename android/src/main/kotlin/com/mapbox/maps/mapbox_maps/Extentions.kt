@@ -22,8 +22,10 @@ import com.mapbox.maps.pigeons.FLTMapInterfaces.MbxImage
 import com.mapbox.maps.pigeons.FLTMapInterfaces.StyleProjection
 import com.mapbox.maps.pigeons.FLTMapInterfaces.StyleProjectionName
 import com.mapbox.maps.pigeons.FLTSettings
+import com.mapbox.maps.pigeons.FLTViewAnnotation
 import com.mapbox.maps.plugin.ModelScaleMode
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import com.mapbox.maps.viewannotation.ViewAnnotationUpdateMode
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
@@ -651,4 +653,80 @@ fun Bitmap.toMbxImage(): MbxImage {
   compress(Bitmap.CompressFormat.PNG, 100, outputStream)
   return MbxImage.Builder().setWidth(width.toLong()).setHeight(height.toLong())
     .setData(outputStream.toByteArray()).build()
+}
+
+fun ViewAnnotationAnchorConfig.toFLTViewAnnotationAnchorConfig(): FLTViewAnnotation.ViewAnnotationAnchorConfig {
+  return FLTViewAnnotation.ViewAnnotationAnchorConfig.Builder().setOffsetX(offsetX)
+    .setOffsetY(offsetY).setAnchor(anchor.toFLTViewAnnotationAnchor()).build()
+}
+
+fun ViewAnnotationAnchor.toFLTViewAnnotationAnchor(): FLTViewAnnotation.ViewAnnotationAnchor {
+  val values = FLTViewAnnotation.ViewAnnotationAnchor.values()
+  return values[ordinal]
+}
+
+fun FLTViewAnnotation.ViewAnnotationOptions.toViewAnnotationOption(): ViewAnnotationOptions {
+  return ViewAnnotationOptions.Builder().width(width).height(height).allowOverlap(allowOverlap)
+    .allowOverlapWithPuck(allowOverlapWithPuck).ignoreCameraPadding(ignoreCameraPadding)
+    .selected(selected).visible(visible).annotatedFeature(annotatedFeature?.toAnnotatedFeature())
+    .variableAnchors(variableAnchors?.map { it.toViewAnnotationAnchorConfig() })
+    .build()
+}
+
+fun FLTViewAnnotation.AnnotatedFeature.toAnnotatedFeature(): AnnotatedFeature {
+  return if (AnnotatedFeature.Type.values()[type.ordinal] == AnnotatedFeature.Type.GEOMETRY) {
+    val geometry = (value as Map<String, Any>).toPoint()
+    AnnotatedFeature(geometry)
+  } else {
+    val layerFeature = value as FLTViewAnnotation.AnnotatedLayerFeature
+    AnnotatedFeature(layerFeature.toAnnotatedLayerFeature())
+  }
+}
+
+fun FLTViewAnnotation.AnnotatedLayerFeature.toAnnotatedLayerFeature(): AnnotatedLayerFeature {
+  return AnnotatedLayerFeature.Builder().layerId(layerId).featureId(featureId).build()
+}
+
+fun FLTViewAnnotation.ViewAnnotationAnchorConfig.toViewAnnotationAnchorConfig(): ViewAnnotationAnchorConfig {
+  return ViewAnnotationAnchorConfig.Builder().offsetX(offsetX).offsetY(offsetY)
+    .anchor(anchor.toViewAnnotationAnchor()).build()
+}
+
+fun FLTViewAnnotation.ViewAnnotationAnchor.toViewAnnotationAnchor(): ViewAnnotationAnchor {
+  return ViewAnnotationAnchor.values()[ordinal]
+}
+
+fun ViewAnnotationOptions.toFLTViewAnnotationOptions(): FLTViewAnnotation.ViewAnnotationOptions {
+  return FLTViewAnnotation.ViewAnnotationOptions.Builder().setHeight(height).setWidth(width)
+    .setAllowOverlapWithPuck(allowOverlapWithPuck).setIgnoreCameraPadding(ignoreCameraPadding)
+    .setVisible(visible).setAnnotatedFeature(annotatedFeature?.toFLTAnnotatedFeature())
+    .setVariableAnchors(variableAnchors?.map { it.toFLTViewAnnotationAnchorConfig() })
+    .setAllowOverlap(allowOverlap).setSelected(selected).build()
+}
+
+fun AnnotatedFeature.toFLTAnnotatedFeature(): FLTViewAnnotation.AnnotatedFeature {
+  if (this.isGeometry) {
+    val value = (this.geometry as Point).toMap()
+    return FLTViewAnnotation.AnnotatedFeature.Builder()
+      .setType(FLTViewAnnotation.AnnotatedFeatureType.GEOMETRY).setValue(value).build()
+  }
+  val feature = this.annotatedLayerFeature
+  val value = FLTViewAnnotation.AnnotatedLayerFeature.Builder().setFeatureId(feature.featureId)
+    .setLayerId(feature.layerId).build()
+  return FLTViewAnnotation.AnnotatedFeature.Builder()
+    .setType(FLTViewAnnotation.AnnotatedFeatureType.ANNOTATED_LAYER_FEATURE).setValue(value).build()
+}
+
+fun FLTViewAnnotation.ViewAnnotationUpdateMode.toViewAnnotationUpdateMode(): ViewAnnotationUpdateMode {
+  if (this == FLTViewAnnotation.ViewAnnotationUpdateMode.MAP_FIXED_DELAY) {
+    return ViewAnnotationUpdateMode.MAP_FIXED_DELAY
+  }
+  return ViewAnnotationUpdateMode.MAP_SYNCHRONIZED
+}
+
+fun ViewAnnotationUpdateMode.toFLTViewAnnotationUpdateMode(): FLTViewAnnotation.ViewAnnotationUpdateMode {
+  if (toString() == ViewAnnotationUpdateMode.MAP_FIXED_DELAY.toString()) {
+    return FLTViewAnnotation.ViewAnnotationUpdateMode.MAP_FIXED_DELAY
+  }
+  return FLTViewAnnotation.ViewAnnotationUpdateMode.MAP_SYNCHRONIZED
 }
