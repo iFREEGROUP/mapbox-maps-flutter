@@ -32,6 +32,7 @@ class ViewAnnotationController: NSObject, FLTViewAnnotationManager {
             return
         }
         let id = UUID().uuidString.hashValue
+        viewAnnotation!.view.tag = id
         viewAnnotation!.onAnchorCoordinateChanged = { [weak self] coordinate in
             self?.onViewAnnotationUpdatedListener?.onViewAnnotationAnchorCoordinateUpdatedViewId(id, anchorCoordinate: coordinate.toDict(), completion: {error in})
         }
@@ -41,9 +42,17 @@ class ViewAnnotationController: NSObject, FLTViewAnnotationManager {
         viewAnnotation!.onVisibilityChanged = { [weak self] visibility in
             self?.onViewAnnotationUpdatedListener?.onViewAnnotationVisibilityUpdatedViewId(id, visible: visibility, completion: {error in})
         }
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewAnnotationTapped))
+        viewAnnotation!.view.isUserInteractionEnabled = true
+        viewAnnotation!.view.addGestureRecognizer(tapGesture)
+        
         mapView.viewAnnotations.add(viewAnnotation!)
         annotationMap[id] = viewAnnotation!
         completion(NSNumber(integerLiteral: id),nil)
+    }
+    
+    @objc func viewAnnotationTapped(_ sender: UITapGestureRecognizer) {
+        onViewAnnotationClickListener?.onViewAnnotationClickViewId(sender.view!.tag, completion: {error in})
     }
     
     func removeAllViewAnnotations(completion: @escaping (FlutterError?) -> Void) {

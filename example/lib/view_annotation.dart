@@ -41,7 +41,8 @@ class OnViewAnnotationClickListener extends OnViewAnnotationTapListener {
 
 class OnViewAnnotationUpdateListener extends OnViewAnnotationUpdatedListener {
   @override
-  void onViewAnnotationAnchorCoordinateUpdated(int viewId, Map<String?, Object?>? anchorCoordinate) {
+  void onViewAnnotationAnchorCoordinateUpdated(
+      int viewId, Map<String?, Object?>? anchorCoordinate) {
     debugPrint('onViewAnnotationAnchorCoordinateUpdated: $viewId, $anchorCoordinate');
   }
 
@@ -51,15 +52,16 @@ class OnViewAnnotationUpdateListener extends OnViewAnnotationUpdatedListener {
   }
 
   @override
-  void onViewAnnotationPositionUpdated(int viewId, ScreenCoordinate leftTopCoordinate, double width, double height) {
-    debugPrint('onViewAnnotationPositionUpdated: $viewId, ${json.encode(leftTopCoordinate)}, $width, $height');
+  void onViewAnnotationPositionUpdated(
+      int viewId, ScreenCoordinate leftTopCoordinate, double width, double height) {
+    debugPrint(
+        'onViewAnnotationPositionUpdated: $viewId, ${json.encode(leftTopCoordinate)}, $width, $height');
   }
 
   @override
   void onViewAnnotationVisibilityUpdated(int viewId, bool visible) {
     debugPrint('onViewAnnotationAnchorUpdated: $viewId, $visible');
   }
-
 }
 
 class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
@@ -212,6 +214,7 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
   }
 
   OnViewAnnotationClickListener? onViewAnnotationClickListener;
+  OnViewAnnotationUpdatedListener? onViewAnnotationUpdatedListener;
 
   Widget addClickListener() {
     return TextButton(
@@ -224,6 +227,19 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
         mapboxMap?.viewAnnotationManager
             .addOnViewAnnotationClickListener(onViewAnnotationClickListener!);
       },
+    );
+  }
+
+  Widget addUpdateListener() {
+    return TextButton(
+      onPressed: () {
+        if (onViewAnnotationUpdatedListener != null) {
+          return;
+        }
+        onViewAnnotationUpdatedListener = OnViewAnnotationUpdateListener();
+        mapboxMap?.viewAnnotationManager.addOnViewAnnotationUpdatedListener(onViewAnnotationUpdatedListener!);
+      },
+      child: Text('add updateListener'),
     );
   }
 
@@ -240,6 +256,7 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
         update(),
         delete(),
         addClickListener(),
+        addUpdateListener(),
       ],
     );
 
