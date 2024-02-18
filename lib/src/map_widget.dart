@@ -63,6 +63,7 @@ class MapWidget extends StatefulWidget {
     this.onStyleDataLoadedListener,
     this.onStyleImageMissingListener,
     this.onStyleImageUnusedListener,
+    this.onResourceRequestListener,
     this.onTapListener,
     this.onLongTapListener,
     this.onScrollListener,
@@ -105,6 +106,9 @@ class MapWidget extends StatefulWidget {
     }
     if (onStyleImageUnusedListener != null) {
       _eventTypes.add(_MapEvent.styleImageRemoveUnused);
+    }
+    if (onResourceRequestListener != null) {
+      _eventTypes.add(_MapEvent.resourceRequest);
     }
   }
 
@@ -176,6 +180,9 @@ class MapWidget extends StatefulWidget {
   /// Invoked whenever an image added to the Style is no longer needed and can be removed using StyleManager#removeStyleImage method.
   final OnStyleImageUnusedListener? onStyleImageUnusedListener;
 
+  /// Invoked when map makes a request to load required resources.
+  final OnResourceRequestListener? onResourceRequestListener;
+
   /// Which gestures should be consumed by the map.
   ///
   /// It is possible for other gesture recognizers to be competing with the map on pointer
@@ -217,7 +224,7 @@ class _MapWidgetState extends State<MapWidget> {
       'textureView': widget.textureView,
       'styleUri': widget.styleUri,
       'eventTypes': widget._eventTypes.map((e) => e.index).toList(),
-      'mapboxPluginVersion': '1.0.0-beta.3'
+      'mapboxPluginVersion': '1.0.0-rc.1'
     };
 
     return _mapboxMapsPlatform.buildView(widget.androidHostingMode,
@@ -260,6 +267,7 @@ class _MapWidgetState extends State<MapWidget> {
       onStyleDataLoadedListener: widget.onStyleDataLoadedListener,
       onStyleImageMissingListener: widget.onStyleImageMissingListener,
       onStyleImageUnusedListener: widget.onStyleImageUnusedListener,
+      onResourceRequestListener: widget.onResourceRequestListener,
       onMapTapListener: widget.onTapListener,
       onMapLongTapListener: widget.onLongTapListener,
       onMapScrollListener: widget.onScrollListener,

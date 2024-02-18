@@ -25,6 +25,7 @@ class _MapboxMapsPlatform {
       ArgumentCallbacks<StyleImageMissingEventData>();
   final onStyleImageUnusedPlatform =
       ArgumentCallbacks<StyleImageUnusedEventData>();
+  final onResourceRequestPlatform = ArgumentCallbacks<ResourceEventData>();
 
   final int _channelSuffix = _suffixesRegistry.getSuffix();
   late MethodChannel _channel;
@@ -98,6 +99,10 @@ class _MapboxMapsPlatform {
         onStyleImageUnusedPlatform(
             StyleImageUnusedEventData.fromJson(jsonDecode(call.arguments)));
         break;
+      case _MapEvent.resourceRequest:
+        onResourceRequestPlatform(
+            ResourceEventData.fromJson(jsonDecode(call.arguments)));
+        break;
       default:
         throw MissingPluginException();
     }
@@ -118,7 +123,6 @@ class _MapboxMapsPlatform {
     creationParams['channelSuffix'] = _channelSuffix;
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-
       switch (androidHostingMode) {
         case AndroidPlatformViewHostingMode.TLHC_VD:
         case AndroidPlatformViewHostingMode.TLHC_HC:
