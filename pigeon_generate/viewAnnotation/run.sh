@@ -5,4 +5,7 @@ flutter pub run pigeon \
   --objc_source_out pigeon_generate/viewAnnotation/output/viewAnnotation.g.m \
   --objc_prefix 'FLT' \
   --java_out pigeon_generate/viewAnnotation/output/FLTViewAnnotation.java \
-  --java_package "com.mapbox.maps.pigeons"
+  --java_package "com.mapbox.maps.pigeons" \
+  --kotlin_package "com.mapbox.maps.mapbox_maps.pigeons" \
+  --kotlin_out pigeon_generate/viewAnnotation/output/viewAnnotation.g.kt \
+  --swift_out pigeon_generate/viewAnnotation/output/viewAnnotation.g.swift

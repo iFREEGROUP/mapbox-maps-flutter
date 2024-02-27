@@ -23,8 +23,6 @@ import com.mapbox.maps.mapbox_maps.annotation.AnnotationController
 import com.mapbox.maps.mapbox_maps.pigeons.*
 import com.mapbox.maps.mapbox_maps.annotation.ViewAnnotationController
 import com.mapbox.maps.mapbox_maps.snapshot.SnapshotController
-import com.mapbox.maps.pigeons.FLTMapInterfaces
-import com.mapbox.maps.pigeons.FLTSettings
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel

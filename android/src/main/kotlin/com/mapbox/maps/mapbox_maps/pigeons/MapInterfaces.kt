@@ -173,34 +173,6 @@ enum class MapDebugOptionsData(val raw: Int) {
   }
 }
 
-/** Enum describing how to place view annotation relatively to geometry. */
-enum class ViewAnnotationAnchor(val raw: Int) {
-  /** The top of the view annotation is placed closest to the geometry. */
-  TOP(0),
-  /** The left side of the view annotation is placed closest to the geometry. */
-  LEFT(1),
-  /** The bottom of the view annotation is placed closest to the geometry. */
-  BOTTOM(2),
-  /** The right side of the view annotation is placed closest to the geometry. */
-  RIGHT(3),
-  /** The top-left corner of the view annotation is placed closest to the geometry. */
-  TOP_LEFT(4),
-  /** The bottom-right corner of the view annotation is placed closest to the geometry. */
-  BOTTOM_RIGHT(5),
-  /** The top-right corner of the view annotation is placed closest to the geometry. */
-  TOP_RIGHT(6),
-  /** The bottom-left corner of the view annotation is placed closest to the geometry. */
-  BOTTOM_LEFT(7),
-  /** The center of the view annotation is placed closest to the geometry. */
-  CENTER(8);
-
-  companion object {
-    fun ofRaw(raw: Int): ViewAnnotationAnchor? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
 /** Type information of the variant's content */
 enum class Type(val raw: Int) {
   SCREEN_BOX(0),

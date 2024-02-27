@@ -4,4 +4,6 @@ flutter pub run pigeon \
   --objc_header_out pigeon_generate/snapshot/output/snapshot_manager.g.h \
   --objc_source_out pigeon_generate/snapshot/output/snapshot_manager.g.m \
    --objc_prefix 'FLT' \
-  --java_out pigeon_generate/snapshot/output/snapshot_manager.java
+  --java_out pigeon_generate/snapshot/output/snapshot_manager.java \
+  --kotlin_out pigeon_generate/snapshot/output/snapshot_manager.g.kt \
+  --swift_out pigeon_generate/snapshot/output/snapshot_manager.g.swift

@@ -6,4 +6,6 @@ flutter pub run pigeon \
   --objc_source_out pigeon_generate/snapshotter/output/snapshotter.g.m \
   --objc_prefix 'FLT' \
   --java_out pigeon_generate/snapshotter/output/FLTSnapshot.java \
-  --java_package "com.mapbox.maps.pigeons"
+  --java_package "com.mapbox.maps.pigeons" \
+  --kotlin_out pigeon_generate/snapshotter/output/snapshotter.g.kt \
+  --swift_out pigeon_generate/snapshotter/output/snapshotter.g.swift

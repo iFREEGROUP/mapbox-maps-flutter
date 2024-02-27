@@ -1,6 +1,11 @@
 package com.mapbox.maps.mapbox_maps.snapshot
 
 import com.mapbox.maps.Size
+import com.mapbox.maps.mapbox_maps.pigeons.CameraOptions
+import com.mapbox.maps.mapbox_maps.pigeons.CameraState
+import com.mapbox.maps.mapbox_maps.pigeons.MbxEdgeInsets
+import com.mapbox.maps.mapbox_maps.pigeons.MbxImage
+import com.mapbox.maps.mapbox_maps.pigeons._SnapshotterMessager
 import com.mapbox.maps.mapbox_maps.toCameraOptions
 import com.mapbox.maps.mapbox_maps.toCameraState
 import com.mapbox.maps.mapbox_maps.toEdgeInsets
@@ -9,17 +14,11 @@ import com.mapbox.maps.mapbox_maps.toFLTCoordinateBounds
 import com.mapbox.maps.mapbox_maps.toFLTSize
 import com.mapbox.maps.mapbox_maps.toMbxImage
 import com.mapbox.maps.mapbox_maps.toPoint
-import com.mapbox.maps.pigeons.FLTMapInterfaces
-import com.mapbox.maps.pigeons.FLTMapInterfaces.MbxImage
-import com.mapbox.maps.pigeons.FLTSnapshot
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.CyclicBarrier
 
 class SnapshotterManager(private val delegate: SnapshotControllerDelegate) :
-  FLTSnapshot._SnapshotterMessager {
+  _SnapshotterMessager {
   override fun cancel(id: String) {
-    delegate.getSnapshotter(id).cancel();
+    delegate.getSnapshotter(id).cancel()
   }
 
   override fun destroy(id: String) {
@@ -27,7 +26,7 @@ class SnapshotterManager(private val delegate: SnapshotControllerDelegate) :
     delegate.remove(id)
   }
 
-  override fun setCamera(id: String, cameraOptions: FLTMapInterfaces.CameraOptions) {
+  override fun setCamera(id: String, cameraOptions: CameraOptions) {
     delegate.getSnapshotter(id).setCamera(cameraOptions.toCameraOptions(delegate.getContext()))
   }
 
@@ -39,19 +38,19 @@ class SnapshotterManager(private val delegate: SnapshotControllerDelegate) :
     delegate.getSnapshotter(id).setStyleJson(styleJson)
   }
 
-  override fun setSize(id: String, size: FLTMapInterfaces.Size) {
+  override fun setSize(id: String, size: com.mapbox.maps.mapbox_maps.pigeons.Size) {
     delegate.getSnapshotter(id).setSize(Size(size.width.toFloat(), size.height.toFloat()))
   }
 
   override fun cameraForCoordinates(
     id: String,
-    coordinates: MutableList<MutableMap<String, Any>>,
-    padding: FLTMapInterfaces.MbxEdgeInsets,
+    coordinates: List<Map<String?, Any?>?>,
+    padding: MbxEdgeInsets,
     bearing: Double?,
     pitch: Double?
-  ): FLTMapInterfaces.CameraOptions {
+  ): CameraOptions {
     val cameraOptions = delegate.getSnapshotter(id).cameraForCoordinates(
-      coordinates.map { it.toPoint() },
+      coordinates.map { it!!.toPoint() },
       padding.toEdgeInsets(delegate.getContext()),
       bearing ?: 0.0, pitch ?: 0.0,
     )
@@ -60,19 +59,19 @@ class SnapshotterManager(private val delegate: SnapshotControllerDelegate) :
 
   override fun coordinateBoundsForCamera(
     id: String,
-    camera: FLTMapInterfaces.CameraOptions
-  ): FLTMapInterfaces.CoordinateBounds {
+    camera: CameraOptions
+  ): com.mapbox.maps.mapbox_maps.pigeons.CoordinateBounds {
     val coordinateBounds = delegate.getSnapshotter(id)
       .coordinateBoundsForCamera(camera.toCameraOptions(delegate.getContext()))
     return coordinateBounds.toFLTCoordinateBounds()
   }
 
-  override fun getCameraState(id: String): FLTMapInterfaces.CameraState {
+  override fun getCameraState(id: String): CameraState {
     val cameraState = delegate.getSnapshotter(id).getCameraState()
     return cameraState.toCameraState(delegate.getContext())
   }
 
-  override fun getSize(id: String): FLTMapInterfaces.Size {
+  override fun getSize(id: String): com.mapbox.maps.mapbox_maps.pigeons.Size {
     val size = delegate.getSnapshotter(id).getSize()
     return size.toFLTSize(delegate.getContext())
   }
@@ -85,12 +84,12 @@ class SnapshotterManager(private val delegate: SnapshotControllerDelegate) :
     return delegate.getSnapshotter(id).getStyleUri()
   }
 
-  override fun start(id: String, result: FLTSnapshot.NullableResult<MbxImage>) {
+  override fun start(id: String, callback: (Result<MbxImage?>) -> Unit) {
     delegate.getSnapshotter(id).start { snapshot, errorMessage ->
       if (errorMessage == null) {
-        result.success(snapshot?.toMbxImage())
+        callback(Result.success(snapshot?.toMbxImage()))
       } else {
-        result.error(UnknownError(errorMessage))
+        callback(Result.failure(UnknownError(errorMessage)))
       }
     }
   }

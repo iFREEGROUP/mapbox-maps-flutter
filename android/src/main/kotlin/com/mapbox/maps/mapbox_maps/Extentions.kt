@@ -13,9 +13,6 @@ import com.mapbox.maps.extension.style.light.generated.flatLight
 import com.mapbox.maps.extension.style.projection.generated.Projection
 import com.mapbox.maps.extension.style.types.StyleTransition
 import com.mapbox.maps.mapbox_maps.pigeons.*
-import com.mapbox.maps.plugin.ModelScaleMode
-import com.mapbox.maps.plugin.animation.MapAnimationOptions
-import com.mapbox.maps.viewannotation.ViewAnnotationUpdateMode
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
@@ -36,15 +33,18 @@ fun TileStoreUsageMode.toTileStoreUsageMode(): com.mapbox.maps.TileStoreUsageMod
     TileStoreUsageMode.READ_ONLY -> com.mapbox.maps.TileStoreUsageMode.READ_ONLY
   }
 }
+
 fun StyleProjectionName.toProjectionName(): ProjectionName {
   return when (this) {
     StyleProjectionName.GLOBE -> ProjectionName.GLOBE
     StyleProjectionName.MERCATOR -> ProjectionName.MERCATOR
   }
 }
+
 fun StyleProjection.toProjection(): com.mapbox.maps.extension.style.projection.generated.Projection {
   return com.mapbox.maps.extension.style.projection.generated.Projection(name.toProjectionName())
 }
+
 fun TransitionOptions.toStyleTransition(): StyleTransition {
   val builder = StyleTransition.Builder()
   duration?.let {
@@ -56,12 +56,14 @@ fun TransitionOptions.toStyleTransition(): StyleTransition {
 
   return builder.build()
 }
+
 fun Anchor.toAnchor(): com.mapbox.maps.extension.style.layers.properties.generated.Anchor {
   return when (this) {
     Anchor.MAP -> com.mapbox.maps.extension.style.layers.properties.generated.Anchor.MAP
     Anchor.VIEWPORT -> com.mapbox.maps.extension.style.layers.properties.generated.Anchor.VIEWPORT
   }
 }
+
 fun FlatLight.toFlatLight(): com.mapbox.maps.extension.style.light.generated.FlatLight {
   return flatLight(id) {
     anchor?.let {
@@ -184,15 +186,20 @@ fun RenderedQueryGeometry.toRenderedQueryGeometry(context: Context): com.mapbox.
         )
       )
     }
+
     Type.LIST -> {
       val array: Array<Array<Double>> =
         Gson().fromJson(value, Array<Array<Double>>::class.java)
       com.mapbox.maps.RenderedQueryGeometry.valueOf(
         array.map {
-          com.mapbox.maps.ScreenCoordinate(it[0].toDevicePixels(context).toDouble(), it[1].toDevicePixels(context).toDouble())
+          com.mapbox.maps.ScreenCoordinate(
+            it[0].toDevicePixels(context).toDouble(),
+            it[1].toDevicePixels(context).toDouble()
+          )
         }.toList()
       )
     }
+
     Type.SCREEN_COORDINATE -> {
       val pointArray = Gson().fromJson(
         value,
@@ -290,17 +297,21 @@ fun MbxEdgeInsets.toEdgeInsets(context: Context): EdgeInsets {
 }
 
 fun ScreenCoordinate.toScreenCoordinate(context: Context): com.mapbox.maps.ScreenCoordinate {
-  return com.mapbox.maps.ScreenCoordinate(x.toDevicePixels(context).toDouble(), y.toDevicePixels(context).toDouble())
+  return com.mapbox.maps.ScreenCoordinate(
+    x.toDevicePixels(context).toDouble(),
+    y.toDevicePixels(context).toDouble()
+  )
 }
 
-fun CameraOptions.toCameraOptions(context: Context): com.mapbox.maps.CameraOptions = com.mapbox.maps.CameraOptions.Builder()
-  .anchor(anchor?.toScreenCoordinate(context))
-  .bearing(bearing)
-  .center(center?.toPoint())
-  .padding(padding?.toEdgeInsets(context))
-  .zoom(zoom)
-  .pitch(pitch)
-  .build()
+fun CameraOptions.toCameraOptions(context: Context): com.mapbox.maps.CameraOptions =
+  com.mapbox.maps.CameraOptions.Builder()
+    .anchor(anchor?.toScreenCoordinate(context))
+    .bearing(bearing)
+    .center(center?.toPoint())
+    .padding(padding?.toEdgeInsets(context))
+    .zoom(zoom)
+    .pitch(pitch)
+    .build()
 
 fun ScreenBox.toScreenBox(context: Context): com.mapbox.maps.ScreenBox =
   com.mapbox.maps.ScreenBox(min.toScreenCoordinate(context), max.toScreenCoordinate(context))
@@ -319,25 +330,32 @@ fun Map<String?, Any?>.toGeometry(): Geometry {
     this["type"] == "Point" -> {
       return Point.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "Polygon" -> {
       return Polygon.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "MultiPolygon" -> {
       return MultiPolygon.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "MultiPoint" -> {
       return MultiPoint.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "MultiLineString" -> {
       return MultiLineString.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "LineString" -> {
       return LineString.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "GeometryCollection" -> {
       return GeometryCollection.fromJson(Gson().toJson(this))
     }
-    else -> throw(RuntimeException("Unsupported Geometry: ${Gson().toJson(this)}"))
+
+    else -> throw (RuntimeException("Unsupported Geometry: ${Gson().toJson(this)}"))
   }
 }
 
@@ -355,16 +373,21 @@ fun com.mapbox.common.LoggingLevel.toFLTLoggingLevel(): LoggingLevel {
     com.mapbox.common.LoggingLevel.ERROR -> LoggingLevel.ERROR
   }
 }
+
 fun StyleTransition.toFLTTransitionOptions(): TransitionOptions {
   return TransitionOptions(delay, duration)
 }
+
 fun com.mapbox.maps.plugin.ModelScaleMode.toFLTModelScaleMode(): ModelScaleMode {
   return when (this) {
     com.mapbox.maps.plugin.ModelScaleMode.VIEWPORT -> ModelScaleMode.VIEWPORT
     com.mapbox.maps.plugin.ModelScaleMode.MAP -> ModelScaleMode.MAP
-    else -> { throw java.lang.RuntimeException("Scale mode not supported: $this") }
+    else -> {
+      throw java.lang.RuntimeException("Scale mode not supported: $this")
+    }
   }
 }
+
 fun com.mapbox.maps.StylePropertyValue.toFLTStylePropertyValue(): StylePropertyValue {
   return StylePropertyValue(value.toJson(), StylePropertyValueKind.values()[kind.ordinal])
 }
@@ -373,12 +396,16 @@ fun ProjectionName.toFLTProjectionName(): StyleProjectionName {
   return when (this) {
     ProjectionName.GLOBE -> StyleProjectionName.GLOBE
     ProjectionName.MERCATOR -> StyleProjectionName.MERCATOR
-    else -> { throw java.lang.RuntimeException("Projection $this is not supported.") }
+    else -> {
+      throw java.lang.RuntimeException("Projection $this is not supported.")
+    }
   }
 }
+
 fun Projection.toFLTProjection(): StyleProjection {
   return StyleProjection(name.toFLTProjectionName())
 }
+
 fun com.mapbox.maps.StyleObjectInfo.toFLTStyleObjectInfo(): StyleObjectInfo {
   return StyleObjectInfo(id, type)
 }
@@ -397,12 +424,18 @@ fun com.mapbox.maps.FeatureExtensionValue.toFLTFeatureExtensionValue(): FeatureE
 }
 
 fun com.mapbox.maps.QueriedFeature.toFLTQueriedFeature(): QueriedFeature {
-  return QueriedFeature(JSONObject(this.feature.toJson()).toMap(), source, sourceLayer, state.toJson())
+  return QueriedFeature(
+    JSONObject(this.feature.toJson()).toMap(),
+    source,
+    sourceLayer,
+    state.toJson()
+  )
 }
 
 fun com.mapbox.maps.QueriedRenderedFeature.toFLTQueriedRenderedFeature(): QueriedRenderedFeature {
   return QueriedRenderedFeature(queriedFeature.toFLTQueriedFeature(), layers)
 }
+
 fun com.mapbox.maps.QueriedSourceFeature.toFLTQueriedSourceFeature(): QueriedSourceFeature {
   return QueriedSourceFeature(queriedFeature.toFLTQueriedFeature())
 }
@@ -416,7 +449,10 @@ fun com.mapbox.maps.MapDebugOptions.toFLTMapDebugOptions(): MapDebugOptions {
 }
 
 fun com.mapbox.maps.GlyphsRasterizationOptions.toFLTGlyphsRasterizationOptions(): GlyphsRasterizationOptions {
-  return GlyphsRasterizationOptions(GlyphsRasterizationMode.values()[rasterizationMode.ordinal], fontFamily)
+  return GlyphsRasterizationOptions(
+    GlyphsRasterizationMode.values()[rasterizationMode.ordinal],
+    fontFamily
+  )
 }
 
 fun com.mapbox.maps.MapOptions.toFLTMapOptions(context: Context): MapOptions {
@@ -513,6 +549,7 @@ fun JSONObject.toMap(): Map<String?, Any?> = keys().asSequence().associateWith {
       val map = (0 until value.length()).associate { Pair(it.toString(), value[it]) }
       JSONObject(map).toMap().values.toList()
     }
+
     is JSONObject -> value.toMap()
     JSONObject.NULL -> null
     else -> value
@@ -526,82 +563,84 @@ fun Number.toLogicalPixels(context: Context): Double {
 fun Bitmap.toMbxImage(): MbxImage {
   val outputStream = ByteArrayOutputStream(byteCount)
   compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-  return MbxImage.Builder().setWidth(width.toLong()).setHeight(height.toLong())
-    .setData(outputStream.toByteArray()).build()
+  return MbxImage(width.toLong(), height.toLong(), outputStream.toByteArray())
 }
 
-fun ViewAnnotationAnchorConfig.toFLTViewAnnotationAnchorConfig(): FLTViewAnnotation.ViewAnnotationAnchorConfig {
-  return FLTViewAnnotation.ViewAnnotationAnchorConfig.Builder().setOffsetX(offsetX)
-    .setOffsetY(offsetY).setAnchor(anchor.toFLTViewAnnotationAnchor()).build()
+fun com.mapbox.maps.ViewAnnotationAnchorConfig.toFLTViewAnnotationAnchorConfig(): ViewAnnotationAnchorConfig {
+  return ViewAnnotationAnchorConfig(anchor.toFLTViewAnnotationAnchor(), offsetX, offsetY)
 }
 
-fun ViewAnnotationAnchor.toFLTViewAnnotationAnchor(): FLTViewAnnotation.ViewAnnotationAnchor {
-  val values = FLTViewAnnotation.ViewAnnotationAnchor.values()
+fun com.mapbox.maps.ViewAnnotationAnchor.toFLTViewAnnotationAnchor(): ViewAnnotationAnchor {
+  val values = ViewAnnotationAnchor.values()
   return values[ordinal]
 }
 
-fun FLTViewAnnotation.ViewAnnotationOptions.toViewAnnotationOption(): ViewAnnotationOptions {
-  return ViewAnnotationOptions.Builder().width(width).height(height).allowOverlap(allowOverlap)
+fun ViewAnnotationOptions.toViewAnnotationOption(): com.mapbox.maps.ViewAnnotationOptions {
+  return com.mapbox.maps.ViewAnnotationOptions.Builder().width(width).height(height)
+    .allowOverlap(allowOverlap)
     .allowOverlapWithPuck(allowOverlapWithPuck).ignoreCameraPadding(ignoreCameraPadding)
     .selected(selected).visible(visible).annotatedFeature(annotatedFeature?.toAnnotatedFeature())
-    .variableAnchors(variableAnchors?.map { it.toViewAnnotationAnchorConfig() })
+    .variableAnchors(variableAnchors?.map { it?.toViewAnnotationAnchorConfig() })
     .build()
 }
 
-fun FLTViewAnnotation.AnnotatedFeature.toAnnotatedFeature(): AnnotatedFeature {
-  return if (AnnotatedFeature.Type.values()[type.ordinal] == AnnotatedFeature.Type.GEOMETRY) {
-    val geometry = (value as Map<String, Any>).toPoint()
-    AnnotatedFeature(geometry)
-  } else {
-    val layerFeature = value as FLTViewAnnotation.AnnotatedLayerFeature
-    AnnotatedFeature(layerFeature.toAnnotatedLayerFeature())
+fun AnnotatedFeature.toAnnotatedFeature(): com.mapbox.maps.AnnotatedFeature {
+  if (AnnotatedFeatureType.ofRaw(type.ordinal) == AnnotatedFeatureType.GEOMETRY) {
+    val geometry = (value as Map<String?, Any?>).toPoint()
+    return com.mapbox.maps.AnnotatedFeature(geometry)
   }
+  val layerFeature = value as AnnotatedLayerFeature
+  return com.mapbox.maps.AnnotatedFeature(layerFeature.toAnnotatedLayerFeature())
 }
 
-fun FLTViewAnnotation.AnnotatedLayerFeature.toAnnotatedLayerFeature(): AnnotatedLayerFeature {
-  return AnnotatedLayerFeature.Builder().layerId(layerId).featureId(featureId).build()
+fun AnnotatedLayerFeature.toAnnotatedLayerFeature(): com.mapbox.maps.AnnotatedLayerFeature {
+  return com.mapbox.maps.AnnotatedLayerFeature.Builder().layerId(layerId).featureId(featureId)
+    .build()
 }
 
-fun FLTViewAnnotation.ViewAnnotationAnchorConfig.toViewAnnotationAnchorConfig(): ViewAnnotationAnchorConfig {
-  return ViewAnnotationAnchorConfig.Builder().offsetX(offsetX).offsetY(offsetY)
+fun ViewAnnotationAnchorConfig.toViewAnnotationAnchorConfig(): com.mapbox.maps.ViewAnnotationAnchorConfig {
+  return com.mapbox.maps.ViewAnnotationAnchorConfig.Builder().offsetX(offsetX).offsetY(offsetY)
     .anchor(anchor.toViewAnnotationAnchor()).build()
 }
 
-fun FLTViewAnnotation.ViewAnnotationAnchor.toViewAnnotationAnchor(): ViewAnnotationAnchor {
-  return ViewAnnotationAnchor.values()[ordinal]
+fun ViewAnnotationAnchor.toViewAnnotationAnchor(): com.mapbox.maps.ViewAnnotationAnchor {
+  return com.mapbox.maps.ViewAnnotationAnchor.values()[ordinal]
 }
 
-fun ViewAnnotationOptions.toFLTViewAnnotationOptions(): FLTViewAnnotation.ViewAnnotationOptions {
-  return FLTViewAnnotation.ViewAnnotationOptions.Builder().setHeight(height).setWidth(width)
-    .setAllowOverlapWithPuck(allowOverlapWithPuck).setIgnoreCameraPadding(ignoreCameraPadding)
-    .setVisible(visible).setAnnotatedFeature(annotatedFeature?.toFLTAnnotatedFeature())
-    .setVariableAnchors(variableAnchors?.map { it.toFLTViewAnnotationAnchorConfig() })
-    .setAllowOverlap(allowOverlap).setSelected(selected).build()
+fun com.mapbox.maps.ViewAnnotationOptions.toFLTViewAnnotationOptions(): ViewAnnotationOptions {
+  return ViewAnnotationOptions(
+    annotatedFeature?.toFLTAnnotatedFeature(),
+    width,
+    height,
+    allowOverlap,
+    allowOverlapWithPuck,
+    visible,
+    variableAnchors?.map { it.toFLTViewAnnotationAnchorConfig() },
+    selected,
+    ignoreCameraPadding
+  )
 }
 
-fun AnnotatedFeature.toFLTAnnotatedFeature(): FLTViewAnnotation.AnnotatedFeature {
+fun com.mapbox.maps.AnnotatedFeature.toFLTAnnotatedFeature(): AnnotatedFeature {
   if (this.isGeometry) {
     val value = (this.geometry as Point).toMap()
-    return FLTViewAnnotation.AnnotatedFeature.Builder()
-      .setType(FLTViewAnnotation.AnnotatedFeatureType.GEOMETRY).setValue(value).build()
+    return AnnotatedFeature(value, AnnotatedFeatureType.GEOMETRY)
   }
   val feature = this.annotatedLayerFeature
-  val value = FLTViewAnnotation.AnnotatedLayerFeature.Builder().setFeatureId(feature.featureId)
-    .setLayerId(feature.layerId).build()
-  return FLTViewAnnotation.AnnotatedFeature.Builder()
-    .setType(FLTViewAnnotation.AnnotatedFeatureType.ANNOTATED_LAYER_FEATURE).setValue(value).build()
+  val value = AnnotatedLayerFeature(feature.layerId, feature.featureId)
+  return AnnotatedFeature(value, AnnotatedFeatureType.ANNOTATED_LAYER_FEATURE)
 }
 
-fun FLTViewAnnotation.ViewAnnotationUpdateMode.toViewAnnotationUpdateMode(): ViewAnnotationUpdateMode {
-  if (this == FLTViewAnnotation.ViewAnnotationUpdateMode.MAP_FIXED_DELAY) {
+fun ViewAnnotationUpdateMode.toViewAnnotationUpdateMode(): com.mapbox.maps.viewannotation.ViewAnnotationUpdateMode {
+  if (this == ViewAnnotationUpdateMode.MAP_FIXED_DELAY) {
+    return com.mapbox.maps.viewannotation.ViewAnnotationUpdateMode.MAP_FIXED_DELAY
+  }
+  return com.mapbox.maps.viewannotation.ViewAnnotationUpdateMode.MAP_SYNCHRONIZED
+}
+
+fun com.mapbox.maps.viewannotation.ViewAnnotationUpdateMode.toFLTViewAnnotationUpdateMode(): ViewAnnotationUpdateMode {
+  if (toString() == ViewAnnotationUpdateMode.MAP_FIXED_DELAY.toString()) {
     return ViewAnnotationUpdateMode.MAP_FIXED_DELAY
   }
   return ViewAnnotationUpdateMode.MAP_SYNCHRONIZED
-}
-
-fun ViewAnnotationUpdateMode.toFLTViewAnnotationUpdateMode(): FLTViewAnnotation.ViewAnnotationUpdateMode {
-  if (toString() == ViewAnnotationUpdateMode.MAP_FIXED_DELAY.toString()) {
-    return FLTViewAnnotation.ViewAnnotationUpdateMode.MAP_FIXED_DELAY
-  }
-  return FLTViewAnnotation.ViewAnnotationUpdateMode.MAP_SYNCHRONIZED
 }

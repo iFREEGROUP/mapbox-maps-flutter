@@ -10,6 +10,7 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.ViewAnnotationAnchorConfig
 import com.mapbox.maps.mapbox_maps.R
+import com.mapbox.maps.mapbox_maps.pigeons.*
 import com.mapbox.maps.mapbox_maps.toAnnotatedLayerFeature
 import com.mapbox.maps.mapbox_maps.toFLTScreenCoordinate
 import com.mapbox.maps.mapbox_maps.toFLTViewAnnotationAnchorConfig
@@ -18,23 +19,13 @@ import com.mapbox.maps.mapbox_maps.toFLTViewAnnotationUpdateMode
 import com.mapbox.maps.mapbox_maps.toMap
 import com.mapbox.maps.mapbox_maps.toViewAnnotationOption
 import com.mapbox.maps.mapbox_maps.toViewAnnotationUpdateMode
-import com.mapbox.maps.pigeons.FLTViewAnnotation
-import com.mapbox.maps.pigeons.FLTViewAnnotation.OnViewAnnotationTapListener
-import com.mapbox.maps.pigeons.FLTViewAnnotation.OnViewAnnotationUpdatedListener
-import com.mapbox.maps.pigeons.FLTViewAnnotation.ViewAnnotationUpdateMode
-import com.mapbox.maps.pigeons.FLTViewAnnotation.VoidResult
 import io.flutter.plugin.common.BinaryMessenger
 
 class ViewAnnotationController(private val context: Context, private val mapView: MapView) :
-  FLTViewAnnotation.ViewAnnotationManager {
+  ViewAnnotationManager {
 
   private lateinit var viewAnnotationUpdatedListener: OnViewAnnotationUpdatedListener
   private lateinit var viewAnnotationClickListener: OnViewAnnotationTapListener
-
-  private val voidResult = object : VoidResult {
-    override fun success() {}
-    override fun error(error: Throwable) {}
-  }
 
   init {
     mapView.viewAnnotationManager.addOnViewAnnotationUpdatedListener(object :
@@ -42,17 +33,15 @@ class ViewAnnotationController(private val context: Context, private val mapView
       override fun onViewAnnotationAnchorCoordinateUpdated(view: View, anchorCoordinate: Point) {
         viewAnnotationUpdatedListener.onViewAnnotationAnchorCoordinateUpdated(
           view.id.toLong(),
-          anchorCoordinate.toMap(),
-          voidResult
-        )
+          anchorCoordinate.toMap()
+        ) {}
       }
 
       override fun onViewAnnotationAnchorUpdated(view: View, anchor: ViewAnnotationAnchorConfig) {
         viewAnnotationUpdatedListener.onViewAnnotationAnchorUpdated(
           view.id.toLong(),
           anchor.toFLTViewAnnotationAnchorConfig(),
-          voidResult
-        )
+        ) {}
       }
 
       override fun onViewAnnotationPositionUpdated(
@@ -66,34 +55,33 @@ class ViewAnnotationController(private val context: Context, private val mapView
           leftTopCoordinate.toFLTScreenCoordinate(context),
           width,
           height,
-          voidResult
-        )
+        ) {}
       }
 
       override fun onViewAnnotationVisibilityUpdated(view: View, visible: Boolean) {
         viewAnnotationUpdatedListener.onViewAnnotationVisibilityUpdated(
           view.id.toLong(),
           visible,
-          voidResult
-        )
+        ) {}
       }
     })
   }
 
   fun setup(messenger: BinaryMessenger) {
-    FLTViewAnnotation.ViewAnnotationManager.setUp(messenger, this)
+    ViewAnnotationManager.setUp(messenger, this)
     viewAnnotationUpdatedListener = OnViewAnnotationUpdatedListener(messenger)
     viewAnnotationClickListener = OnViewAnnotationTapListener(messenger)
   }
 
   fun dispose(messenger: BinaryMessenger) {
-    FLTViewAnnotation.ViewAnnotationManager.setUp(messenger, null)
+    ViewAnnotationManager.setUp(messenger, null)
   }
+
 
   override fun addViewAnnotation(
     data: ByteArray,
-    options: FLTViewAnnotation.ViewAnnotationOptions,
-    result: FLTViewAnnotation.Result<Long>
+    options: ViewAnnotationOptions,
+    callback: (Result<Long>) -> Unit
   ) {
     mapView.viewAnnotationManager.addViewAnnotation(
       R.layout.view_annotation,
@@ -104,54 +92,59 @@ class ViewAnnotationController(private val context: Context, private val mapView
         setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
       }
       view.setOnClickListener {
-        viewAnnotationClickListener.onViewAnnotationClick(it.id.toLong(), voidResult)
+        viewAnnotationClickListener.onViewAnnotationClick(it.id.toLong()) {}
       }
-      result.success(view.id.toLong())
+      callback(Result.success(view.id.toLong()))
     }
   }
 
-  override fun removeAllViewAnnotations(result: VoidResult) {
+
+  override fun removeAllViewAnnotations(callback: (Result<Unit>) -> Unit) {
     mapView.viewAnnotationManager.removeAllViewAnnotations()
-    result.success()
+    callback(Result.success(Unit))
   }
 
+
   override fun getViewAnnotationOptions(
-    annotatedLayerFeature: FLTViewAnnotation.AnnotatedLayerFeature,
-    result: FLTViewAnnotation.NullableResult<FLTViewAnnotation.ViewAnnotationOptions>
+    annotatedLayerFeature: AnnotatedLayerFeature,
+    callback: (Result<ViewAnnotationOptions?>) -> Unit
   ) {
     val options =
       mapView.viewAnnotationManager.getViewAnnotationOptions(annotatedLayerFeature.toAnnotatedLayerFeature())
-    result.success(options?.toFLTViewAnnotationOptions())
+    callback(Result.success(options?.toFLTViewAnnotationOptions()))
   }
 
-  override fun setViewAnnotationUpdateMode(mode: ViewAnnotationUpdateMode, result: VoidResult) {
+  override fun setViewAnnotationUpdateMode(
+    mode: ViewAnnotationUpdateMode,
+    callback: (Result<Unit>) -> Unit
+  ) {
     mapView.viewAnnotationManager.setViewAnnotationUpdateMode(mode.toViewAnnotationUpdateMode())
-    result.success()
+    callback(Result.success(Unit))
   }
 
-  override fun getViewAnnotationUpdateMode(result: FLTViewAnnotation.Result<ViewAnnotationUpdateMode>) {
+  override fun getViewAnnotationUpdateMode(callback: (Result<ViewAnnotationUpdateMode>) -> Unit) {
     val mode = mapView.viewAnnotationManager.getViewAnnotationUpdateMode()
-    result.success(mode.toFLTViewAnnotationUpdateMode())
+    callback(Result.success(mode.toFLTViewAnnotationUpdateMode()))
   }
 
   override fun getViewAnnotationOptionsByViewId(
     viewId: Long,
-    result: FLTViewAnnotation.NullableResult<FLTViewAnnotation.ViewAnnotationOptions>
+    callback: (Result<ViewAnnotationOptions?>) -> Unit
   ) {
     try {
       val view = mapView.findViewById<View?>(viewId.toInt())
       val options = mapView.viewAnnotationManager.getViewAnnotationOptions(view)
-      result.success(options?.toFLTViewAnnotationOptions())
+      callback(Result.success(options?.toFLTViewAnnotationOptions()))
     } catch (e: Exception) {
-      result.error(e)
+      callback(Result.failure(e))
     }
   }
 
   override fun updateViewAnnotation(
     viewId: Long,
-    options: FLTViewAnnotation.ViewAnnotationOptions,
+    options: ViewAnnotationOptions,
     data: ByteArray?,
-    result: FLTViewAnnotation.Result<Boolean>
+    callback: (Result<Boolean>) -> Unit
   ) {
     try {
       val view = mapView.findViewById<ImageView?>(viewId.toInt())
@@ -160,19 +153,19 @@ class ViewAnnotationController(private val context: Context, private val mapView
       }
       val success =
         mapView.viewAnnotationManager.updateViewAnnotation(view, options.toViewAnnotationOption())
-      result.success(success)
+      callback(Result.success(success))
     } catch (e: Exception) {
-      result.error(e)
+      callback(Result.failure(e))
     }
   }
 
-  override fun removeViewAnnotation(viewId: Long, result: VoidResult) {
+  override fun removeViewAnnotation(viewId: Long, callback: (Result<Unit>) -> Unit) {
     try {
       val view = mapView.findViewById<View?>(viewId.toInt())
       mapView.viewAnnotationManager.removeViewAnnotation(view)
-      result.success()
+      callback(Result.success(Unit))
     } catch (e: Exception) {
-      result.error(e)
+      callback(Result.failure(e))
     }
   }
 
