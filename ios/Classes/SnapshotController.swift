@@ -1,5 +1,6 @@
 import Foundation
 import MapboxMaps
+import Flutter
 
 public enum SnapshotControllerError: Error {
     case noSnapshotterFound
@@ -11,10 +12,10 @@ public protocol SnapshotControllerDelegate : AnyObject {
     func remove(id: String)
 }
 
-class SnapshotController: NSObject,FLT_SnapShotManager,SnapshotControllerDelegate {
+class SnapshotController: NSObject,_SnapShotManager,SnapshotControllerDelegate {
  
     private var mapView: MapView
-    private var onSnapshotStyleListener: FLTOnSnapshotStyleListener?
+    private var onSnapshotStyleListener: OnSnapshotStyleListener?
     private var snapshotterMap: [String: Snapshotter] = [:]
     private var cancelables: [String: Set<AnyCancelable>] = [:]
     private var snapshotter: SnapshotterManager?
@@ -25,8 +26,8 @@ class SnapshotController: NSObject,FLT_SnapShotManager,SnapshotControllerDelegat
         snapshotter = SnapshotterManager(withDelegate: self)
     }
     
-    func createOptions(_ options: FLTMapSnapshotOptions, overlayOptions: FLTSnapshotOverlayOptions, error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> String? {
-        let snapshotOptions = MapSnapshotOptions.init(size: CGSize(width: options.size.width, height: options.size.height), pixelRatio: options.pixelRatio,showsLogo: overlayOptions.showLogo,showsAttribution: overlayOptions.showAttributes)
+    func create(options: MapSnapshotOptions, overlayOptions: SnapshotOverlayOptions) throws -> String {
+        let snapshotOptions = MapboxMaps.MapSnapshotOptions.init(size: CGSize(width: options.size.width, height: options.size.height), pixelRatio: options.pixelRatio,showsLogo: overlayOptions.showLogo,showsAttribution: overlayOptions.showAttributes)
         let snapshotter = Snapshotter(options: snapshotOptions)
         let id = UUID().uuidString.replacingOccurrences(of: "-", with: "")
         snapshotterMap[id] = snapshotter
@@ -45,35 +46,33 @@ class SnapshotController: NSObject,FLT_SnapShotManager,SnapshotControllerDelegat
         }.store(in: &cancelables[id]!)
         
         snapshotter.onMapLoadingError.observe { [weak self] mapLoadingError in
-            self?.onSnapshotStyleListener?.onDidFailLoadingStyleMessage(mapLoadingError.message, completion: { flutterError in
-                
+            self?.onSnapshotStyleListener?.onDidFailLoadingStyle(message: mapLoadingError.message, completion: { flutterError in
             })
         }.store(in: &cancelables[id]!)
         
         snapshotter.onStyleImageMissing.observe { [weak self] styleImageMissing in
-            self?.onSnapshotStyleListener?.onStyleImageMissingImageId(styleImageMissing.imageId, completion: { flutterError in
-                
+            self?.onSnapshotStyleListener?.onStyleImageMissing(imageId: styleImageMissing.imageId, completion: { flutterError in
             })
         }.store(in: &cancelables[id]!)
         
         return id
     }
     
-    func snapshot(completion: @escaping (FLTMbxImage?, FlutterError?) -> Void) {
+    func snapshot(completion: @escaping (Result<MbxImage?, Error>) -> Void) {
         let uiImage = try? mapView.snapshot()
         guard let image = uiImage else {
-            completion(nil,nil)
+            completion(Result.success(nil))
             return
         }
-        completion(image.toFLTMbxImage(), nil)
+        completion(Result.success(image.toFLTMbxImage()))
     }
-    
     
     func setup(messager: FlutterBinaryMessenger) {
-        SetUpFLT_SnapShotManager(messager, self)
-        onSnapshotStyleListener = FLTOnSnapshotStyleListener.init(binaryMessenger: messager)
-        SetUpFLT_SnapshotterMessager(messager, snapshotter)
+        _SnapShotManagerSetup.setUp(binaryMessenger: messager, api: self)
+        onSnapshotStyleListener = OnSnapshotStyleListener.init(binaryMessenger: messager)
+        _SnapshotterMessagerSetup.setUp(binaryMessenger: messager, api: snapshotter)
     }
+    
     
     func getSnapshotter(id: String) throws -> MapboxMaps.Snapshotter {
         if snapshotterMap[id] == nil {

@@ -370,18 +370,18 @@ private object _SnapshotterMessagerCodec : StandardMessageCodec() {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface _SnapshotterMessager {
-  fun cancel(id: String)
-  fun destroy(id: String)
-  fun setCamera(id: String, cameraOptions: CameraOptions)
-  fun setStyleUri(id: String, styleUri: String)
-  fun setStyleJson(id: String, styleJson: String)
-  fun setSize(id: String, size: Size)
-  fun cameraForCoordinates(id: String, coordinates: List<Map<String?, Any?>?>, padding: MbxEdgeInsets, bearing: Double?, pitch: Double?): CameraOptions
-  fun coordinateBoundsForCamera(id: String, camera: CameraOptions): CoordinateBounds
-  fun getCameraState(id: String): CameraState
-  fun getSize(id: String): Size
-  fun getStyleJson(id: String): String
-  fun getStyleUri(id: String): String
+  fun cancel(id: String, callback: (Result<Unit>) -> Unit)
+  fun destroy(id: String, callback: (Result<Unit>) -> Unit)
+  fun setCamera(id: String, cameraOptions: CameraOptions, callback: (Result<Unit>) -> Unit)
+  fun setStyleUri(id: String, styleUri: String, callback: (Result<Unit>) -> Unit)
+  fun setStyleJson(id: String, styleJson: String, callback: (Result<Unit>) -> Unit)
+  fun setSize(id: String, size: Size, callback: (Result<Unit>) -> Unit)
+  fun cameraForCoordinates(id: String, coordinates: List<Map<String?, Any?>?>, padding: MbxEdgeInsets, bearing: Double?, pitch: Double?, callback: (Result<CameraOptions>) -> Unit)
+  fun coordinateBoundsForCamera(id: String, camera: CameraOptions, callback: (Result<CoordinateBounds>) -> Unit)
+  fun getCameraState(id: String, callback: (Result<CameraState>) -> Unit)
+  fun getSize(id: String, callback: (Result<Size>) -> Unit)
+  fun getStyleJson(id: String, callback: (Result<String>) -> Unit)
+  fun getStyleUri(id: String, callback: (Result<String>) -> Unit)
   fun start(id: String, callback: (Result<MbxImage?>) -> Unit)
 
   companion object {
@@ -398,14 +398,14 @@ interface _SnapshotterMessager {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val idArg = args[0] as String
-            var wrapped: List<Any?>
-            try {
-              api.cancel(idArg)
-              wrapped = listOf<Any?>(null)
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.cancel(idArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -417,14 +417,14 @@ interface _SnapshotterMessager {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val idArg = args[0] as String
-            var wrapped: List<Any?>
-            try {
-              api.destroy(idArg)
-              wrapped = listOf<Any?>(null)
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.destroy(idArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -437,14 +437,14 @@ interface _SnapshotterMessager {
             val args = message as List<Any?>
             val idArg = args[0] as String
             val cameraOptionsArg = args[1] as CameraOptions
-            var wrapped: List<Any?>
-            try {
-              api.setCamera(idArg, cameraOptionsArg)
-              wrapped = listOf<Any?>(null)
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.setCamera(idArg, cameraOptionsArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -457,14 +457,14 @@ interface _SnapshotterMessager {
             val args = message as List<Any?>
             val idArg = args[0] as String
             val styleUriArg = args[1] as String
-            var wrapped: List<Any?>
-            try {
-              api.setStyleUri(idArg, styleUriArg)
-              wrapped = listOf<Any?>(null)
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.setStyleUri(idArg, styleUriArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -477,14 +477,14 @@ interface _SnapshotterMessager {
             val args = message as List<Any?>
             val idArg = args[0] as String
             val styleJsonArg = args[1] as String
-            var wrapped: List<Any?>
-            try {
-              api.setStyleJson(idArg, styleJsonArg)
-              wrapped = listOf<Any?>(null)
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.setStyleJson(idArg, styleJsonArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -497,14 +497,14 @@ interface _SnapshotterMessager {
             val args = message as List<Any?>
             val idArg = args[0] as String
             val sizeArg = args[1] as Size
-            var wrapped: List<Any?>
-            try {
-              api.setSize(idArg, sizeArg)
-              wrapped = listOf<Any?>(null)
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.setSize(idArg, sizeArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -520,13 +520,15 @@ interface _SnapshotterMessager {
             val paddingArg = args[2] as MbxEdgeInsets
             val bearingArg = args[3] as Double?
             val pitchArg = args[4] as Double?
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.cameraForCoordinates(idArg, coordinatesArg, paddingArg, bearingArg, pitchArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.cameraForCoordinates(idArg, coordinatesArg, paddingArg, bearingArg, pitchArg) { result: Result<CameraOptions> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -539,13 +541,15 @@ interface _SnapshotterMessager {
             val args = message as List<Any?>
             val idArg = args[0] as String
             val cameraArg = args[1] as CameraOptions
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.coordinateBoundsForCamera(idArg, cameraArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.coordinateBoundsForCamera(idArg, cameraArg) { result: Result<CoordinateBounds> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -557,13 +561,15 @@ interface _SnapshotterMessager {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val idArg = args[0] as String
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.getCameraState(idArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.getCameraState(idArg) { result: Result<CameraState> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -575,13 +581,15 @@ interface _SnapshotterMessager {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val idArg = args[0] as String
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.getSize(idArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.getSize(idArg) { result: Result<Size> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -593,13 +601,15 @@ interface _SnapshotterMessager {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val idArg = args[0] as String
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.getStyleJson(idArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.getStyleJson(idArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -611,13 +621,15 @@ interface _SnapshotterMessager {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val idArg = args[0] as String
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.getStyleUri(idArg))
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+            api.getStyleUri(idArg) { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)

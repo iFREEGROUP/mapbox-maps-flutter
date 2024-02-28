@@ -149,29 +149,41 @@ class MbxImage {
 
 @HostApi()
 abstract class _SnapshotterMessager {
+  @async
   void cancel(String id);
 
+  @async
   void destroy(String id);
 
+  @async
   void setCamera(String id, CameraOptions cameraOptions);
 
+  @async
   void setStyleUri(String id, String styleUri);
 
+  @async
   void setStyleJson(String id, String styleJson);
 
+  @async
   void setSize(String id, Size size);
 
+  @async
   CameraOptions cameraForCoordinates(String id, List<Map<String?, Object?>?> coordinates,
       MbxEdgeInsets padding, double? bearing, double? pitch);
 
+  @async
   CoordinateBounds coordinateBoundsForCamera(String id, CameraOptions camera);
 
+  @async
   CameraState getCameraState(String id);
 
+  @async
   Size getSize(String id);
 
+  @async
   String getStyleJson(String id);
 
+  @async
   String getStyleUri(String id);
 
   @async

@@ -1,11 +1,12 @@
 import Foundation
 import MapboxMaps
+import Flutter
 
-class ViewAnnotationController: NSObject, FLTViewAnnotationManager {
-    
+class ViewAnnotationController: NSObject, ViewAnnotationManager {
+
     private var mapView: MapView
-    private var onViewAnnotationClickListener: FLTOnViewAnnotationTapListener?
-    private var onViewAnnotationUpdatedListener: FLTOnViewAnnotationUpdatedListener?
+    private var onViewAnnotationClickListener: OnViewAnnotationTapListener?
+    private var onViewAnnotationUpdatedListener: OnViewAnnotationUpdatedListener?
     private static let errorCode = "0"
     private var annotationMap: [Int: ViewAnnotation] = [:]
     
@@ -15,32 +16,32 @@ class ViewAnnotationController: NSObject, FLTViewAnnotationManager {
     }
     
     func setup(withMessager messager: FlutterBinaryMessenger) {
-        SetUpFLTViewAnnotationManager(messager, self)
-        onViewAnnotationClickListener = FLTOnViewAnnotationTapListener(binaryMessenger: messager)
-        onViewAnnotationUpdatedListener = FLTOnViewAnnotationUpdatedListener(binaryMessenger: messager)
+        ViewAnnotationManagerSetup.setUp(binaryMessenger: messager, api: self)
+        onViewAnnotationClickListener = OnViewAnnotationTapListener(binaryMessenger: messager)
+        onViewAnnotationUpdatedListener = OnViewAnnotationUpdatedListener(binaryMessenger: messager)
     }
     
-    func addViewAnnotationData(_ data: FlutterStandardTypedData, options: FLTViewAnnotationOptions, completion: @escaping (NSNumber?, FlutterError?) -> Void) {
+    func addViewAnnotation(data: FlutterStandardTypedData, options: ViewAnnotationOptions, completion: @escaping (Result<Int64, Error>) -> Void) {
         let uiImage = UIImage(data: data.data, scale: UIScreen.main.scale)
         if uiImage == nil {
-            completion(nil, FlutterError(code: ViewAnnotationController.errorCode, message: "image data is nil", details: nil))
+            completion(.failure(FlutterError(code: ViewAnnotationController.errorCode, message: "image data is nil", details: nil)))
             return
         }
         let viewAnnotation = options.toViewAnnotion(uiImage: uiImage!)
         if viewAnnotation == nil {
-            completion(nil, FlutterError(code: ViewAnnotationController.errorCode, message: "options.annotatedFeature must to set", details: nil))
+            completion(.failure(FlutterError(code: ViewAnnotationController.errorCode, message: "options.annotatedFeature must to set", details: nil)))
             return
         }
         let id = UUID().uuidString.hashValue
         viewAnnotation!.view.tag = id
         viewAnnotation!.onAnchorCoordinateChanged = { [weak self] coordinate in
-            self?.onViewAnnotationUpdatedListener?.onViewAnnotationAnchorCoordinateUpdatedViewId(id, anchorCoordinate: coordinate.toDict(), completion: {error in})
+            self?.onViewAnnotationUpdatedListener?.onViewAnnotationAnchorCoordinateUpdated(viewId: Int64(id), anchorCoordinate: coordinate.toDict(), completion: {error in})
         }
         viewAnnotation!.onAnchorChanged = { [weak self] config in
-            self?.onViewAnnotationUpdatedListener?.onViewAnnotationAnchorUpdatedViewId(id, anchor: config.toFLTViewAnnotationAnchorConfig(), completion: {error in})
+            self?.onViewAnnotationUpdatedListener?.onViewAnnotationAnchorUpdated(viewId: Int64(id), anchor: config.toFLTViewAnnotationAnchorConfig(), completion: {error in})
         }
         viewAnnotation!.onVisibilityChanged = { [weak self] visibility in
-            self?.onViewAnnotationUpdatedListener?.onViewAnnotationVisibilityUpdatedViewId(id, visible: visibility, completion: {error in})
+            self?.onViewAnnotationUpdatedListener?.onViewAnnotationVisibilityUpdated(viewId: Int64(id), visible: visibility, completion: {error in})
         }
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewAnnotationTapped))
         viewAnnotation!.view.isUserInteractionEnabled = true
@@ -48,34 +49,34 @@ class ViewAnnotationController: NSObject, FLTViewAnnotationManager {
         
         mapView.viewAnnotations.add(viewAnnotation!)
         annotationMap[id] = viewAnnotation!
-        completion(NSNumber(integerLiteral: id),nil)
+        completion(.success(Int64(id)))
     }
     
-    @objc func viewAnnotationTapped(_ sender: UITapGestureRecognizer) {
-        onViewAnnotationClickListener?.onViewAnnotationClickViewId(sender.view!.tag, completion: {error in})
-    }
-    
-    func removeAllViewAnnotations(completion: @escaping (FlutterError?) -> Void) {
-        mapView.viewAnnotations.removeAll()
-        annotationMap.removeAll()
-        completion(nil)
-    }
-    
-    func removeViewAnnotationViewId(_ viewId: Int, completion: @escaping (FlutterError?) -> Void) {
-        let viewAnnotation = annotationMap[viewId]
+    func removeViewAnnotation(viewId: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
+        let viewAnnotation = annotationMap[Int(viewId)]
         if viewAnnotation == nil {
-            completion(FlutterError(code: ViewAnnotationController.errorCode, message: "no viewAnnotation found", details: nil))
+            completion(.failure(FlutterError(code: ViewAnnotationController.errorCode, message: "no viewAnnotation found", details: nil)))
             return
         }
         viewAnnotation!.remove()
-        annotationMap.removeValue(forKey: viewId)
-        completion(nil)
+        annotationMap.removeValue(forKey: Int(viewId))
+        completion(.success(()))
     }
     
-    func updateViewAnnotationViewId(_ viewId: Int, options: FLTViewAnnotationOptions, data: FlutterStandardTypedData?, completion: @escaping (NSNumber?, FlutterError?) -> Void) {
-        let viewAnnotation = annotationMap[viewId]
+    @objc func viewAnnotationTapped(_ sender: UITapGestureRecognizer) {
+        onViewAnnotationClickListener?.onViewAnnotationClick(viewId: Int64(sender.view!.tag), completion: {error in})
+    }
+    
+    func removeAllViewAnnotations(completion: @escaping (Result<Void, Error>) -> Void) {
+        mapView.viewAnnotations.removeAll()
+        annotationMap.removeAll()
+        completion(.success(()))
+    }
+    
+    func updateViewAnnotation(viewId: Int64, options: ViewAnnotationOptions, data: FlutterStandardTypedData?, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let viewAnnotation = annotationMap[Int(viewId)]
         if viewAnnotation == nil {
-            completion(NSNumber(booleanLiteral: false),nil)
+            completion(.success(false))
             return
         }
         if let data = data {
@@ -83,36 +84,49 @@ class ViewAnnotationController: NSObject, FLTViewAnnotationManager {
             (viewAnnotation!.view as! UIImageView).image = uiImage
         }
         if options.width != nil && options.height != nil {
-            viewAnnotation!.view.frame = CGRect(x: 0, y: 0, width: options.width!.intValue, height: options.height!.intValue)
+            viewAnnotation!.view.frame = CGRect(x: 0, y: 0, width: options.width!, height: options.height!)
             viewAnnotation!.setNeedsUpdateSize()
         }
         if let allowOverlap = options.allowOverlap {
-            viewAnnotation!.allowOverlap = allowOverlap == 1
+            viewAnnotation!.allowOverlap = allowOverlap
         }
         if let allowOverlapWithPuck = options.allowOverlapWithPuck {
-            viewAnnotation!.allowOverlapWithPuck = allowOverlapWithPuck == 1
+            viewAnnotation!.allowOverlapWithPuck = allowOverlapWithPuck
         }
         if let ignoreCameraPadding = options.ignoreCameraPadding {
-            viewAnnotation!.ignoreCameraPadding = ignoreCameraPadding == 1
+            viewAnnotation!.ignoreCameraPadding = ignoreCameraPadding
         }
         if let selected = options.selected {
-            viewAnnotation!.selected = selected == 1
+            viewAnnotation!.selected = selected
         }
         if let visible = options.visible {
-            viewAnnotation!.visible = visible == 1
+            viewAnnotation!.visible = visible
         }
         if let annotatedFeature = options.annotatedFeature?.toAnnotatedFeature() {
             viewAnnotation!.annotatedFeature = annotatedFeature
         }
         if let variableAnchors = options.variableAnchors?.compactMap({ item in
-            item.toViewAnnotationAnchorConfig()
+            item?.toViewAnnotationAnchorConfig()
         }) {
             viewAnnotation!.variableAnchors = variableAnchors
         }
-        completion(NSNumber(booleanLiteral: true),nil)
+        completion(.success(true))
+    }
+
+    func getViewAnnotationOptionsByViewId(viewId: Int64, completion: @escaping (Result<ViewAnnotationOptions?, Error>) -> Void) {
+        let viewAnnotation = annotationMap[Int(viewId)]
+        if viewAnnotation == nil {
+            completion(.success(nil))
+            return
+        }
+        completion(.success(viewAnnotation!.toFLTViewAnnotationOptions()))
     }
     
-    func getViewAnnotationOptionsAnnotatedLayerFeature(_ annotatedLayerFeature: FLTAnnotatedLayerFeature, completion: @escaping (FLTViewAnnotationOptions?, FlutterError?) -> Void) {
+    func setViewAnnotationUpdateMode(mode: ViewAnnotationUpdateMode, completion: @escaping (Result<Void, Error>) -> Void) {
+        completion(.success(()))
+    }
+    
+    func getViewAnnotationOptions(annotatedLayerFeature: AnnotatedLayerFeature, completion: @escaping (Result<ViewAnnotationOptions?, Error>) -> Void) {
         let viewAnnotation = annotationMap.values.filter { item in
             if let layerFeature = item.annotatedFeature.layerFeature {
                 return layerFeature.layerId == annotatedLayerFeature.layerId && layerFeature.featureId == annotatedLayerFeature.featureId
@@ -120,26 +134,14 @@ class ViewAnnotationController: NSObject, FLTViewAnnotationManager {
             return false
         }
         if viewAnnotation.isEmpty {
-            completion(nil,nil)
+            completion(.success(nil))
             return
         }
-        completion(viewAnnotation[0].toFLTViewAnnotationOptions(),nil)
+        completion(.success(viewAnnotation[0].toFLTViewAnnotationOptions()))
     }
     
-    func getViewAnnotationOptions(byViewIdViewId viewId: Int, completion: @escaping (FLTViewAnnotationOptions?, FlutterError?) -> Void) {
-        let viewAnnotation = annotationMap[viewId]
-        if viewAnnotation == nil {
-            completion(nil,nil)
-            return
-        }
-        completion(viewAnnotation!.toFLTViewAnnotationOptions(),nil)
+    func getViewAnnotationUpdateMode(completion: @escaping (Result<ViewAnnotationUpdateMode, Error>) -> Void) {
+        completion(.failure(FlutterError(code: ViewAnnotationController.errorCode, message: "UnSupport", details: nil)))
     }
     
-    func setViewAnnotationUpdateModeMode(_ mode: FLTViewAnnotationUpdateMode, completion: @escaping (FlutterError?) -> Void) {
-        completion(nil)
-    }
-    
-    func getViewAnnotationUpdateMode(completion: @escaping (FLTViewAnnotationUpdateModeBox?, FlutterError?) -> Void) {
-        completion(nil,nil)
-    }
 }

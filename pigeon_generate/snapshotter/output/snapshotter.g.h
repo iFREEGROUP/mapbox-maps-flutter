@@ -142,24 +142,18 @@ NS_ASSUME_NONNULL_BEGIN
 NSObject<FlutterMessageCodec> *FLT_SnapshotterMessagerGetCodec(void);
 
 @protocol FLT_SnapshotterMessager
-- (void)cancelId:(NSString *)id error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)destroyId:(NSString *)id error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setCameraId:(NSString *)id cameraOptions:(FLTCameraOptions *)cameraOptions error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setStyleUriId:(NSString *)id styleUri:(NSString *)styleUri error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setStyleJsonId:(NSString *)id styleJson:(NSString *)styleJson error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setSizeId:(NSString *)id size:(FLTSize *)size error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable FLTCameraOptions *)cameraForCoordinatesId:(NSString *)id coordinates:(NSArray<NSDictionary<NSString *, id> *> *)coordinates padding:(FLTMbxEdgeInsets *)padding bearing:(nullable NSNumber *)bearing pitch:(nullable NSNumber *)pitch error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable FLTCoordinateBounds *)coordinateBoundsForCameraId:(NSString *)id camera:(FLTCameraOptions *)camera error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable FLTCameraState *)getCameraStateId:(NSString *)id error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable FLTSize *)getSizeId:(NSString *)id error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable NSString *)getStyleJsonId:(NSString *)id error:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable NSString *)getStyleUriId:(NSString *)id error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)cancelId:(NSString *)id completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)destroyId:(NSString *)id completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setCameraId:(NSString *)id cameraOptions:(FLTCameraOptions *)cameraOptions completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setStyleUriId:(NSString *)id styleUri:(NSString *)styleUri completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setStyleJsonId:(NSString *)id styleJson:(NSString *)styleJson completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)setSizeId:(NSString *)id size:(FLTSize *)size completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)cameraForCoordinatesId:(NSString *)id coordinates:(NSArray<NSDictionary<NSString *, id> *> *)coordinates padding:(FLTMbxEdgeInsets *)padding bearing:(nullable NSNumber *)bearing pitch:(nullable NSNumber *)pitch completion:(void (^)(FLTCameraOptions *_Nullable, FlutterError *_Nullable))completion;
+- (void)coordinateBoundsForCameraId:(NSString *)id camera:(FLTCameraOptions *)camera completion:(void (^)(FLTCoordinateBounds *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCameraStateId:(NSString *)id completion:(void (^)(FLTCameraState *_Nullable, FlutterError *_Nullable))completion;
+- (void)getSizeId:(NSString *)id completion:(void (^)(FLTSize *_Nullable, FlutterError *_Nullable))completion;
+- (void)getStyleJsonId:(NSString *)id completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)getStyleUriId:(NSString *)id completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 - (void)startId:(NSString *)id completion:(void (^)(FLTMbxImage *_Nullable, FlutterError *_Nullable))completion;
 @end
 

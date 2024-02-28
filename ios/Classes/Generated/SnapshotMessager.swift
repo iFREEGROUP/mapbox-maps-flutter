@@ -43,247 +43,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-/// Generated class from Pigeon that represents data sent in messages.
-struct MbxEdgeInsets {
-  /// Padding from the top.
-  var top: Double
-  /// Padding from the left.
-  var left: Double
-  /// Padding from the bottom.
-  var bottom: Double
-  /// Padding from the right.
-  var right: Double
-
-  static func fromList(_ list: [Any?]) -> MbxEdgeInsets? {
-    let top = list[0] as! Double
-    let left = list[1] as! Double
-    let bottom = list[2] as! Double
-    let right = list[3] as! Double
-
-    return MbxEdgeInsets(
-      top: top,
-      left: left,
-      bottom: bottom,
-      right: right
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      top,
-      left,
-      bottom,
-      right,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct ScreenCoordinate {
-  /// A value representing the x position of this coordinate.
-  var x: Double
-  /// A value representing the y position of this coordinate.
-  var y: Double
-
-  static func fromList(_ list: [Any?]) -> ScreenCoordinate? {
-    let x = list[0] as! Double
-    let y = list[1] as! Double
-
-    return ScreenCoordinate(
-      x: x,
-      y: y
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      x,
-      y,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct CameraOptions {
-  /// Coordinate at the center of the camera.
-  var center: [String?: Any?]? = nil
-  /// Padding around the interior of the view that affects the frame of
-  /// reference for `center`.
-  var padding: MbxEdgeInsets? = nil
-  /// Point of reference for `zoom` and `angle`, assuming an origin at the
-  /// top-left corner of the view.
-  var anchor: ScreenCoordinate? = nil
-  /// Zero-based zoom level. Constrained to the minimum and maximum zoom
-  /// levels.
-  var zoom: Double? = nil
-  /// Bearing, measured in degrees from true north. Wrapped to [0, 360).
-  var bearing: Double? = nil
-  /// Pitch toward the horizon measured in degrees.
-  var pitch: Double? = nil
-
-  static func fromList(_ list: [Any?]) -> CameraOptions? {
-    let center: [String?: Any?]? = nilOrValue(list[0])
-    var padding: MbxEdgeInsets? = nil
-    if let paddingList: [Any?] = nilOrValue(list[1]) {
-      padding = MbxEdgeInsets.fromList(paddingList)
-    }
-    var anchor: ScreenCoordinate? = nil
-    if let anchorList: [Any?] = nilOrValue(list[2]) {
-      anchor = ScreenCoordinate.fromList(anchorList)
-    }
-    let zoom: Double? = nilOrValue(list[3])
-    let bearing: Double? = nilOrValue(list[4])
-    let pitch: Double? = nilOrValue(list[5])
-
-    return CameraOptions(
-      center: center,
-      padding: padding,
-      anchor: anchor,
-      zoom: zoom,
-      bearing: bearing,
-      pitch: pitch
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      center,
-      padding?.toList(),
-      anchor?.toList(),
-      zoom,
-      bearing,
-      pitch,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct Size {
-  /// Width of the size.
-  var width: Double
-  /// Height of the size.
-  var height: Double
-
-  static func fromList(_ list: [Any?]) -> Size? {
-    let width = list[0] as! Double
-    let height = list[1] as! Double
-
-    return Size(
-      width: width,
-      height: height
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      width,
-      height,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct CoordinateBounds {
-  /// Coordinate at the southwest corner.
-  /// Note: setting this field with invalid values (infinite, NaN) will crash the application.
-  var southwest: [String?: Any?]
-  /// Coordinate at the northeast corner.
-  /// Note: setting this field with invalid values (infinite, NaN) will crash the application.
-  var northeast: [String?: Any?]
-  /// If set to `true`, an infinite (unconstrained) bounds covering the world coordinates would be used.
-  /// Coordinates provided in `southwest` and `northeast` fields would be omitted and have no effect.
-  var infiniteBounds: Bool
-
-  static func fromList(_ list: [Any?]) -> CoordinateBounds? {
-    let southwest = list[0] as! [String?: Any?]
-    let northeast = list[1] as! [String?: Any?]
-    let infiniteBounds = list[2] as! Bool
-
-    return CoordinateBounds(
-      southwest: southwest,
-      northeast: northeast,
-      infiniteBounds: infiniteBounds
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      southwest,
-      northeast,
-      infiniteBounds,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct CameraState {
-  /// Coordinate at the center of the camera.
-  var center: [String?: Any?]
-  /// Padding around the interior of the view that affects the frame of
-  /// reference for `center`.
-  var padding: MbxEdgeInsets
-  /// Zero-based zoom level. Constrained to the minimum and maximum zoom
-  /// levels.
-  var zoom: Double
-  /// Bearing, measured in degrees from true north. Wrapped to [0, 360).
-  var bearing: Double
-  /// Pitch toward the horizon measured in degrees.
-  var pitch: Double
-
-  static func fromList(_ list: [Any?]) -> CameraState? {
-    let center = list[0] as! [String?: Any?]
-    let padding = MbxEdgeInsets.fromList(list[1] as! [Any?])!
-    let zoom = list[2] as! Double
-    let bearing = list[3] as! Double
-    let pitch = list[4] as! Double
-
-    return CameraState(
-      center: center,
-      padding: padding,
-      zoom: zoom,
-      bearing: bearing,
-      pitch: pitch
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      center,
-      padding.toList(),
-      zoom,
-      bearing,
-      pitch,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct MbxImage {
-  /// The width of the image, in screen pixels.
-  var width: Int64
-  /// The height of the image, in screen pixels.
-  var height: Int64
-  /// 32-bit premultiplied RGBA image data.
-  ///
-  /// An uncompressed image data encoded in 32-bit RGBA format with premultiplied
-  /// alpha channel. This field should contain exactly `4 * width * height` bytes. It
-  /// should consist of a sequence of scanlines.
-  var data: FlutterStandardTypedData
-
-  static func fromList(_ list: [Any?]) -> MbxImage? {
-    let width = list[0] is Int64 ? list[0] as! Int64 : Int64(list[0] as! Int32)
-    let height = list[1] is Int64 ? list[1] as! Int64 : Int64(list[1] as! Int32)
-    let data = list[2] as! FlutterStandardTypedData
-
-    return MbxImage(
-      width: width,
-      height: height,
-      data: data
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      width,
-      height,
-      data,
-    ]
-  }
-}
-
 private class _SnapshotterMessagerCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -690,3 +449,146 @@ class OnSnapshotStyleListener: OnSnapshotStyleListenerProtocol {
     }
   }
 }
+
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct MapSnapshotOptions {
+  var size: Size
+  var pixelRatio: Double
+
+  static func fromList(_ list: [Any?]) -> MapSnapshotOptions? {
+    let size = Size.fromList(list[0] as! [Any?])!
+    let pixelRatio = list[1] as! Double
+
+    return MapSnapshotOptions(
+      size: size,
+      pixelRatio: pixelRatio
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      size.toList(),
+      pixelRatio,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct SnapshotOverlayOptions {
+  var showLogo: Bool
+  var showAttributes: Bool
+
+  static func fromList(_ list: [Any?]) -> SnapshotOverlayOptions? {
+    let showLogo = list[0] as! Bool
+    let showAttributes = list[1] as! Bool
+
+    return SnapshotOverlayOptions(
+      showLogo: showLogo,
+      showAttributes: showAttributes
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      showLogo,
+      showAttributes,
+    ]
+  }
+}
+
+private class _SnapShotManagerCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 128:
+      return MapSnapshotOptions.fromList(self.readValue() as! [Any?])
+    case 129:
+      return MbxImage.fromList(self.readValue() as! [Any?])
+    case 130:
+      return Size.fromList(self.readValue() as! [Any?])
+    case 131:
+      return SnapshotOverlayOptions.fromList(self.readValue() as! [Any?])
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class _SnapShotManagerCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? MapSnapshotOptions {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else if let value = value as? MbxImage {
+      super.writeByte(129)
+      super.writeValue(value.toList())
+    } else if let value = value as? Size {
+      super.writeByte(130)
+      super.writeValue(value.toList())
+    } else if let value = value as? SnapshotOverlayOptions {
+      super.writeByte(131)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class _SnapShotManagerCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return _SnapShotManagerCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return _SnapShotManagerCodecWriter(data: data)
+  }
+}
+
+class _SnapShotManagerCodec: FlutterStandardMessageCodec {
+  static let shared = _SnapShotManagerCodec(readerWriter: _SnapShotManagerCodecReaderWriter())
+}
+
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol _SnapShotManager {
+  func create(options: MapSnapshotOptions, overlayOptions: SnapshotOverlayOptions) throws -> String
+  func snapshot(completion: @escaping (Result<MbxImage?, Error>) -> Void)
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class _SnapShotManagerSetup {
+  /// The codec used by _SnapShotManager.
+  static var codec: FlutterStandardMessageCodec { _SnapShotManagerCodec.shared }
+  /// Sets up an instance of `_SnapShotManager` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: _SnapShotManager?) {
+    let createChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.mapbox_maps_flutter._SnapShotManager.create", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      createChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let optionsArg = args[0] as! MapSnapshotOptions
+        let overlayOptionsArg = args[1] as! SnapshotOverlayOptions
+        do {
+          let result = try api.create(options: optionsArg, overlayOptions: overlayOptionsArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      createChannel.setMessageHandler(nil)
+    }
+    let snapshotChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.mapbox_maps_flutter._SnapShotManager.snapshot", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      snapshotChannel.setMessageHandler { _, reply in
+        api.snapshot { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      snapshotChannel.setMessageHandler(nil)
+    }
+  }
+}
+

@@ -1,7 +1,8 @@
 import Foundation
 import MapboxMaps
+import Flutter
 
-class SnapshotterManager : NSObject, FLT_SnapshotterMessager {
+class SnapshotterManager : NSObject, _SnapshotterMessager {
     
     private var delegate: SnapshotControllerDelegate
     private static let errorCode = "0"
@@ -10,122 +11,121 @@ class SnapshotterManager : NSObject, FLT_SnapshotterMessager {
         self.delegate = delegate
     }
     
-    func cancelId(_ id: String, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+    func cancel(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try delegate.getSnapshotter(id: id).cancel()
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode, message: error.localizedDescription, details: nil)
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode, message: error.localizedDescription, details: nil)))
         }
     }
     
-    func destroyId(_ id: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+    func destroy(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
         delegate.remove(id: id)
+        completion(.success(()))
     }
     
-    func setCameraId(_ id: String, cameraOptions: FLTCameraOptions, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+    func setCamera(id: String, cameraOptions: CameraOptions, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try delegate.getSnapshotter(id: id).setCamera(to: cameraOptions.toCameraOptions())
+            completion(.success(()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func setStyleUriId(_ id: String, styleUri: String, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+    func setStyleUri(id: String, styleUri: String, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try delegate.getSnapshotter(id: id).styleURI = StyleURI.init(rawValue: styleUri)
+            completion(.success(()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func setStyleJsonId(_ id: String, styleJson: String, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+    func setStyleJson(id: String, styleJson: String, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try delegate.getSnapshotter(id: id).styleJSON = styleJson
+            completion(.success(()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func setSizeId(_ id: String, size: FLTSize, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+    func setSize(id: String, size: Size, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try delegate.getSnapshotter(id: id).snapshotSize = CGSize(width: size.width, height: size.height)
+            completion(.success(()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func camera(forCoordinatesId id: String, coordinates: [[String : Any]], padding: FLTMbxEdgeInsets, bearing: NSNumber?, pitch: NSNumber?, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> FLTCameraOptions? {
+    func cameraForCoordinates(id: String, coordinates: [[String? : Any?]?], padding: MbxEdgeInsets, bearing: Double?, pitch: Double?, completion: @escaping (Result<CameraOptions, Error>) -> Void) {
         do {
-            let cameraOptions = try delegate.getSnapshotter(id: id).camera(for: coordinates.compactMap(convertDictionaryToCLLocationCoordinate2D(dict:)), padding: padding.toUIEdgeInsets(), bearing: bearing?.doubleValue, pitch: pitch?.doubleValue)
-            return cameraOptions.toFLTCameraOptions()
+            let cameraOptions = try delegate.getSnapshotter(id: id).camera(for: coordinates.compactMap(convertDictionaryToCLLocationCoordinate2D(dict:)), padding: padding.toUIEdgeInsets(), bearing: bearing, pitch: pitch)
+            completion(.success(cameraOptions.toFLTCameraOptions()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
-            return nil
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func coordinateBounds(forCameraId id: String, camera: FLTCameraOptions, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> FLTCoordinateBounds? {
+    func coordinateBoundsForCamera(id: String, camera: CameraOptions, completion: @escaping (Result<CoordinateBounds, Error>) -> Void) {
         do {
             let coordinateBounds = try delegate.getSnapshotter(id: id).coordinateBounds(for: camera.toCameraOptions())
-            return coordinateBounds.toFLTCoordinateBounds()
+            completion(.success(coordinateBounds.toFLTCoordinateBounds()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
-            return nil
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func getCameraStateId(_ id: String, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> FLTCameraState? {
+    func getCameraState(id: String, completion: @escaping (Result<CameraState, Error>) -> Void) {
         do {
             let camera = try delegate.getSnapshotter(id: id).cameraState
-            return camera.toFLTCameraState()
+            completion(.success(camera.toFLTCameraState()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
-            return nil
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func getSizeId(_ id: String, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> FLTSize? {
+    func getSize(id: String, completion: @escaping (Result<Size, Error>) -> Void) {
         do {
             let size = try delegate.getSnapshotter(id: id).snapshotSize
-            return size.toFLTSize()
+            completion(.success(size.toFLTSize()))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
-            return nil
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func getStyleJsonId(_ id: String, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> String? {
+    func getStyleJson(id: String, completion: @escaping (Result<String, Error>) -> Void) {
         do {
             let json = try delegate.getSnapshotter(id: id).styleJSON
-            return json
+            completion(.success(json))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
-            return nil
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func getStyleUriId(_ id: String, error flutterError: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> String? {
+    func getStyleUri(id: String, completion: @escaping (Result<String, Error>) -> Void) {
         do {
             let uri = try delegate.getSnapshotter(id: id).styleURI
-            return uri?.rawValue
+            completion(.success(uri?.rawValue ?? ""))
         } catch {
-            flutterError.pointee = FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)
-            return nil
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     
-    func startId(_ id: String, completion: @escaping (FLTMbxImage?, FlutterError?) -> Void) {
+    func start(id: String, completion: @escaping (Result<MbxImage?, Error>) -> Void) {
         do {
             try delegate.getSnapshotter(id: id).start(overlayHandler: nil) { snapshotResult in
                 let image = try? snapshotResult.get()
                 if  image != nil {
-                    completion(image!.toFLTMbxImage(),nil)
+                    completion(.success(image!.toFLTMbxImage()))
                 } else {
-                    completion(nil,FlutterError(code: SnapshotterManager.errorCode,message: "snapshot fail",details: nil))
+                    completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: "snapshot fail",details: nil)))
                 }
             }
         } catch {
-            completion(nil,FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil))
+            completion(.failure(FlutterError(code: SnapshotterManager.errorCode,message: error.localizedDescription,details: nil)))
         }
     }
     

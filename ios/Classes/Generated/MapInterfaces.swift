@@ -120,28 +120,6 @@ enum MapDebugOptionsData: Int {
   case tERRAINWIREFRAME = 9
 }
 
-/// Enum describing how to place view annotation relatively to geometry.
-enum ViewAnnotationAnchor: Int {
-  /// The top of the view annotation is placed closest to the geometry.
-  case tOP = 0
-  /// The left side of the view annotation is placed closest to the geometry.
-  case lEFT = 1
-  /// The bottom of the view annotation is placed closest to the geometry.
-  case bOTTOM = 2
-  /// The right side of the view annotation is placed closest to the geometry.
-  case rIGHT = 3
-  /// The top-left corner of the view annotation is placed closest to the geometry.
-  case tOPLEFT = 4
-  /// The bottom-right corner of the view annotation is placed closest to the geometry.
-  case bOTTOMRIGHT = 5
-  /// The top-right corner of the view annotation is placed closest to the geometry.
-  case tOPRIGHT = 6
-  /// The bottom-left corner of the view annotation is placed closest to the geometry.
-  case bOTTOMLEFT = 7
-  /// The center of the view annotation is placed closest to the geometry.
-  case cENTER = 8
-}
-
 /// Type information of the variant's content
 enum Type: Int {
   case sCREENBOX = 0

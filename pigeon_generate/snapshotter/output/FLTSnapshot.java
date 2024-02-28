@@ -989,35 +989,29 @@ public class FLTSnapshot {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface _SnapshotterMessager {
 
-    void cancel(@NonNull String id);
+    void cancel(@NonNull String id, @NonNull VoidResult result);
 
-    void destroy(@NonNull String id);
+    void destroy(@NonNull String id, @NonNull VoidResult result);
 
-    void setCamera(@NonNull String id, @NonNull CameraOptions cameraOptions);
+    void setCamera(@NonNull String id, @NonNull CameraOptions cameraOptions, @NonNull VoidResult result);
 
-    void setStyleUri(@NonNull String id, @NonNull String styleUri);
+    void setStyleUri(@NonNull String id, @NonNull String styleUri, @NonNull VoidResult result);
 
-    void setStyleJson(@NonNull String id, @NonNull String styleJson);
+    void setStyleJson(@NonNull String id, @NonNull String styleJson, @NonNull VoidResult result);
 
-    void setSize(@NonNull String id, @NonNull Size size);
+    void setSize(@NonNull String id, @NonNull Size size, @NonNull VoidResult result);
 
-    @NonNull 
-    CameraOptions cameraForCoordinates(@NonNull String id, @NonNull List<Map<String, Object>> coordinates, @NonNull MbxEdgeInsets padding, @Nullable Double bearing, @Nullable Double pitch);
+    void cameraForCoordinates(@NonNull String id, @NonNull List<Map<String, Object>> coordinates, @NonNull MbxEdgeInsets padding, @Nullable Double bearing, @Nullable Double pitch, @NonNull Result<CameraOptions> result);
 
-    @NonNull 
-    CoordinateBounds coordinateBoundsForCamera(@NonNull String id, @NonNull CameraOptions camera);
+    void coordinateBoundsForCamera(@NonNull String id, @NonNull CameraOptions camera, @NonNull Result<CoordinateBounds> result);
 
-    @NonNull 
-    CameraState getCameraState(@NonNull String id);
+    void getCameraState(@NonNull String id, @NonNull Result<CameraState> result);
 
-    @NonNull 
-    Size getSize(@NonNull String id);
+    void getSize(@NonNull String id, @NonNull Result<Size> result);
 
-    @NonNull 
-    String getStyleJson(@NonNull String id);
+    void getStyleJson(@NonNull String id, @NonNull Result<String> result);
 
-    @NonNull 
-    String getStyleUri(@NonNull String id);
+    void getStyleUri(@NonNull String id, @NonNull Result<String> result);
 
     void start(@NonNull String id, @NonNull NullableResult<MbxImage> result);
 
@@ -1037,15 +1031,20 @@ public class FLTSnapshot {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
-                try {
-                  api.cancel(idArg);
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.cancel(idArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1061,15 +1060,20 @@ public class FLTSnapshot {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
-                try {
-                  api.destroy(idArg);
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.destroy(idArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1086,15 +1090,20 @@ public class FLTSnapshot {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
                 CameraOptions cameraOptionsArg = (CameraOptions) args.get(1);
-                try {
-                  api.setCamera(idArg, cameraOptionsArg);
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setCamera(idArg, cameraOptionsArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1111,15 +1120,20 @@ public class FLTSnapshot {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
                 String styleUriArg = (String) args.get(1);
-                try {
-                  api.setStyleUri(idArg, styleUriArg);
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setStyleUri(idArg, styleUriArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1136,15 +1150,20 @@ public class FLTSnapshot {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
                 String styleJsonArg = (String) args.get(1);
-                try {
-                  api.setStyleJson(idArg, styleJsonArg);
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setStyleJson(idArg, styleJsonArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1161,15 +1180,20 @@ public class FLTSnapshot {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
                 Size sizeArg = (Size) args.get(1);
-                try {
-                  api.setSize(idArg, sizeArg);
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setSize(idArg, sizeArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1189,15 +1213,20 @@ public class FLTSnapshot {
                 MbxEdgeInsets paddingArg = (MbxEdgeInsets) args.get(2);
                 Double bearingArg = (Double) args.get(3);
                 Double pitchArg = (Double) args.get(4);
-                try {
-                  CameraOptions output = api.cameraForCoordinates(idArg, coordinatesArg, paddingArg, bearingArg, pitchArg);
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Result<CameraOptions> resultCallback =
+                    new Result<CameraOptions>() {
+                      public void success(CameraOptions result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.cameraForCoordinates(idArg, coordinatesArg, paddingArg, bearingArg, pitchArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1214,15 +1243,20 @@ public class FLTSnapshot {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
                 CameraOptions cameraArg = (CameraOptions) args.get(1);
-                try {
-                  CoordinateBounds output = api.coordinateBoundsForCamera(idArg, cameraArg);
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Result<CoordinateBounds> resultCallback =
+                    new Result<CoordinateBounds>() {
+                      public void success(CoordinateBounds result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.coordinateBoundsForCamera(idArg, cameraArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1238,15 +1272,20 @@ public class FLTSnapshot {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
-                try {
-                  CameraState output = api.getCameraState(idArg);
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Result<CameraState> resultCallback =
+                    new Result<CameraState>() {
+                      public void success(CameraState result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getCameraState(idArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1262,15 +1301,20 @@ public class FLTSnapshot {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
-                try {
-                  Size output = api.getSize(idArg);
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Result<Size> resultCallback =
+                    new Result<Size>() {
+                      public void success(Size result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getSize(idArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1286,15 +1330,20 @@ public class FLTSnapshot {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
-                try {
-                  String output = api.getStyleJson(idArg);
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Result<String> resultCallback =
+                    new Result<String>() {
+                      public void success(String result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getStyleJson(idArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -1310,15 +1359,20 @@ public class FLTSnapshot {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String idArg = (String) args.get(0);
-                try {
-                  String output = api.getStyleUri(idArg);
-                  wrapped.add(0, output);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Result<String> resultCallback =
+                    new Result<String>() {
+                      public void success(String result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.getStyleUri(idArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

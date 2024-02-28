@@ -377,13 +377,13 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(cancelId:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(cancelId:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(cancelId:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(cancelId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        FlutterError *error;
-        [api cancelId:arg_id error:&error];
-        callback(wrapResult(nil, error));
+        [api cancelId:arg_id completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -396,13 +396,13 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(destroyId:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(destroyId:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(destroyId:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(destroyId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        FlutterError *error;
-        [api destroyId:arg_id error:&error];
-        callback(wrapResult(nil, error));
+        [api destroyId:arg_id completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -415,14 +415,14 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setCameraId:cameraOptions:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setCameraId:cameraOptions:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(setCameraId:cameraOptions:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setCameraId:cameraOptions:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
         FLTCameraOptions *arg_cameraOptions = GetNullableObjectAtIndex(args, 1);
-        FlutterError *error;
-        [api setCameraId:arg_id cameraOptions:arg_cameraOptions error:&error];
-        callback(wrapResult(nil, error));
+        [api setCameraId:arg_id cameraOptions:arg_cameraOptions completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -435,14 +435,14 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setStyleUriId:styleUri:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setStyleUriId:styleUri:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(setStyleUriId:styleUri:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setStyleUriId:styleUri:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
         NSString *arg_styleUri = GetNullableObjectAtIndex(args, 1);
-        FlutterError *error;
-        [api setStyleUriId:arg_id styleUri:arg_styleUri error:&error];
-        callback(wrapResult(nil, error));
+        [api setStyleUriId:arg_id styleUri:arg_styleUri completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -455,14 +455,14 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setStyleJsonId:styleJson:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setStyleJsonId:styleJson:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(setStyleJsonId:styleJson:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setStyleJsonId:styleJson:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
         NSString *arg_styleJson = GetNullableObjectAtIndex(args, 1);
-        FlutterError *error;
-        [api setStyleJsonId:arg_id styleJson:arg_styleJson error:&error];
-        callback(wrapResult(nil, error));
+        [api setStyleJsonId:arg_id styleJson:arg_styleJson completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -475,14 +475,14 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setSizeId:size:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setSizeId:size:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(setSizeId:size:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(setSizeId:size:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
         FLTSize *arg_size = GetNullableObjectAtIndex(args, 1);
-        FlutterError *error;
-        [api setSizeId:arg_id size:arg_size error:&error];
-        callback(wrapResult(nil, error));
+        [api setSizeId:arg_id size:arg_size completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -495,7 +495,7 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(cameraForCoordinatesId:coordinates:padding:bearing:pitch:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(cameraForCoordinatesId:coordinates:padding:bearing:pitch:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(cameraForCoordinatesId:coordinates:padding:bearing:pitch:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(cameraForCoordinatesId:coordinates:padding:bearing:pitch:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
@@ -503,9 +503,9 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         FLTMbxEdgeInsets *arg_padding = GetNullableObjectAtIndex(args, 2);
         NSNumber *arg_bearing = GetNullableObjectAtIndex(args, 3);
         NSNumber *arg_pitch = GetNullableObjectAtIndex(args, 4);
-        FlutterError *error;
-        FLTCameraOptions *output = [api cameraForCoordinatesId:arg_id coordinates:arg_coordinates padding:arg_padding bearing:arg_bearing pitch:arg_pitch error:&error];
-        callback(wrapResult(output, error));
+        [api cameraForCoordinatesId:arg_id coordinates:arg_coordinates padding:arg_padding bearing:arg_bearing pitch:arg_pitch completion:^(FLTCameraOptions *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -518,14 +518,14 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(coordinateBoundsForCameraId:camera:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(coordinateBoundsForCameraId:camera:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(coordinateBoundsForCameraId:camera:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(coordinateBoundsForCameraId:camera:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
         FLTCameraOptions *arg_camera = GetNullableObjectAtIndex(args, 1);
-        FlutterError *error;
-        FLTCoordinateBounds *output = [api coordinateBoundsForCameraId:arg_id camera:arg_camera error:&error];
-        callback(wrapResult(output, error));
+        [api coordinateBoundsForCameraId:arg_id camera:arg_camera completion:^(FLTCoordinateBounds *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -538,13 +538,13 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getCameraStateId:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getCameraStateId:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getCameraStateId:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getCameraStateId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        FlutterError *error;
-        FLTCameraState *output = [api getCameraStateId:arg_id error:&error];
-        callback(wrapResult(output, error));
+        [api getCameraStateId:arg_id completion:^(FLTCameraState *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -557,13 +557,13 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getSizeId:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getSizeId:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getSizeId:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getSizeId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        FlutterError *error;
-        FLTSize *output = [api getSizeId:arg_id error:&error];
-        callback(wrapResult(output, error));
+        [api getSizeId:arg_id completion:^(FLTSize *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -576,13 +576,13 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getStyleJsonId:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getStyleJsonId:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getStyleJsonId:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getStyleJsonId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        FlutterError *error;
-        NSString *output = [api getStyleJsonId:arg_id error:&error];
-        callback(wrapResult(output, error));
+        [api getStyleJsonId:arg_id completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -595,13 +595,13 @@ void SetUpFLT_SnapshotterMessager(id<FlutterBinaryMessenger> binaryMessenger, NS
         binaryMessenger:binaryMessenger
         codec:FLT_SnapshotterMessagerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getStyleUriId:error:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getStyleUriId:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getStyleUriId:completion:)], @"FLT_SnapshotterMessager api (%@) doesn't respond to @selector(getStyleUriId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSString *arg_id = GetNullableObjectAtIndex(args, 0);
-        FlutterError *error;
-        NSString *output = [api getStyleUriId:arg_id error:&error];
-        callback(wrapResult(output, error));
+        [api getStyleUriId:arg_id completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
