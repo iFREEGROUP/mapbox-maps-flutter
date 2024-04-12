@@ -192,10 +192,7 @@ fun RenderedQueryGeometry.toRenderedQueryGeometry(context: Context): com.mapbox.
         Gson().fromJson(value, Array<Array<Double>>::class.java)
       com.mapbox.maps.RenderedQueryGeometry.valueOf(
         array.map {
-          com.mapbox.maps.ScreenCoordinate(
-            it[0].toDevicePixels(context).toDouble(),
-            it[1].toDevicePixels(context).toDouble()
-          )
+          com.mapbox.maps.ScreenCoordinate(it[0].toDevicePixels(context).toDouble(), it[1].toDevicePixels(context).toDouble())
         }.toList()
       )
     }
@@ -285,7 +282,7 @@ fun Map<String?, Any?>.toPolygon(): Polygon {
 }
 
 fun CoordinateBounds.toCoordinateBounds() =
-  com.mapbox.maps.CoordinateBounds(southwest.toPoint(), northeast.toPoint(), infiniteBounds)
+  com.mapbox.maps.CoordinateBounds(southwest, northeast, infiniteBounds)
 
 fun MbxEdgeInsets.toEdgeInsets(context: Context): EdgeInsets {
   return EdgeInsets(
@@ -297,21 +294,17 @@ fun MbxEdgeInsets.toEdgeInsets(context: Context): EdgeInsets {
 }
 
 fun ScreenCoordinate.toScreenCoordinate(context: Context): com.mapbox.maps.ScreenCoordinate {
-  return com.mapbox.maps.ScreenCoordinate(
-    x.toDevicePixels(context).toDouble(),
-    y.toDevicePixels(context).toDouble()
-  )
+  return com.mapbox.maps.ScreenCoordinate(x.toDevicePixels(context).toDouble(), y.toDevicePixels(context).toDouble())
 }
 
-fun CameraOptions.toCameraOptions(context: Context): com.mapbox.maps.CameraOptions =
-  com.mapbox.maps.CameraOptions.Builder()
-    .anchor(anchor?.toScreenCoordinate(context))
-    .bearing(bearing)
-    .center(center?.toPoint())
-    .padding(padding?.toEdgeInsets(context))
-    .zoom(zoom)
-    .pitch(pitch)
-    .build()
+fun CameraOptions.toCameraOptions(context: Context): com.mapbox.maps.CameraOptions = com.mapbox.maps.CameraOptions.Builder()
+  .anchor(anchor?.toScreenCoordinate(context))
+  .bearing(bearing)
+  .center(center)
+  .padding(padding?.toEdgeInsets(context))
+  .zoom(zoom)
+  .pitch(pitch)
+  .build()
 
 fun ScreenBox.toScreenBox(context: Context): com.mapbox.maps.ScreenBox =
   com.mapbox.maps.ScreenBox(min.toScreenCoordinate(context), max.toScreenCoordinate(context))
@@ -330,32 +323,25 @@ fun Map<String?, Any?>.toGeometry(): Geometry {
     this["type"] == "Point" -> {
       return Point.fromJson(Gson().toJson(this))
     }
-
     this["type"] == "Polygon" -> {
       return Polygon.fromJson(Gson().toJson(this))
     }
-
     this["type"] == "MultiPolygon" -> {
       return MultiPolygon.fromJson(Gson().toJson(this))
     }
-
     this["type"] == "MultiPoint" -> {
       return MultiPoint.fromJson(Gson().toJson(this))
     }
-
     this["type"] == "MultiLineString" -> {
       return MultiLineString.fromJson(Gson().toJson(this))
     }
-
     this["type"] == "LineString" -> {
       return LineString.fromJson(Gson().toJson(this))
     }
-
     this["type"] == "GeometryCollection" -> {
       return GeometryCollection.fromJson(Gson().toJson(this))
     }
-
-    else -> throw (RuntimeException("Unsupported Geometry: ${Gson().toJson(this)}"))
+    else -> throw(RuntimeException("Unsupported Geometry: ${Gson().toJson(this)}"))
   }
 }
 
@@ -373,21 +359,16 @@ fun com.mapbox.common.LoggingLevel.toFLTLoggingLevel(): LoggingLevel {
     com.mapbox.common.LoggingLevel.ERROR -> LoggingLevel.ERROR
   }
 }
-
 fun StyleTransition.toFLTTransitionOptions(): TransitionOptions {
   return TransitionOptions(delay, duration)
 }
-
 fun com.mapbox.maps.plugin.ModelScaleMode.toFLTModelScaleMode(): ModelScaleMode {
   return when (this) {
     com.mapbox.maps.plugin.ModelScaleMode.VIEWPORT -> ModelScaleMode.VIEWPORT
     com.mapbox.maps.plugin.ModelScaleMode.MAP -> ModelScaleMode.MAP
-    else -> {
-      throw java.lang.RuntimeException("Scale mode not supported: $this")
-    }
+    else -> { throw java.lang.RuntimeException("Scale mode not supported: $this") }
   }
 }
-
 fun com.mapbox.maps.StylePropertyValue.toFLTStylePropertyValue(): StylePropertyValue {
   return StylePropertyValue(value.toJson(), StylePropertyValueKind.values()[kind.ordinal])
 }
@@ -396,16 +377,12 @@ fun ProjectionName.toFLTProjectionName(): StyleProjectionName {
   return when (this) {
     ProjectionName.GLOBE -> StyleProjectionName.GLOBE
     ProjectionName.MERCATOR -> StyleProjectionName.MERCATOR
-    else -> {
-      throw java.lang.RuntimeException("Projection $this is not supported.")
-    }
+    else -> { throw java.lang.RuntimeException("Projection $this is not supported.") }
   }
 }
-
 fun Projection.toFLTProjection(): StyleProjection {
   return StyleProjection(name.toFLTProjectionName())
 }
-
 fun com.mapbox.maps.StyleObjectInfo.toFLTStyleObjectInfo(): StyleObjectInfo {
   return StyleObjectInfo(id, type)
 }
@@ -424,18 +401,12 @@ fun com.mapbox.maps.FeatureExtensionValue.toFLTFeatureExtensionValue(): FeatureE
 }
 
 fun com.mapbox.maps.QueriedFeature.toFLTQueriedFeature(): QueriedFeature {
-  return QueriedFeature(
-    JSONObject(this.feature.toJson()).toMap(),
-    source,
-    sourceLayer,
-    state.toJson()
-  )
+  return QueriedFeature(JSONObject(this.feature.toJson()).toMap(), source, sourceLayer, state.toJson())
 }
 
 fun com.mapbox.maps.QueriedRenderedFeature.toFLTQueriedRenderedFeature(): QueriedRenderedFeature {
   return QueriedRenderedFeature(queriedFeature.toFLTQueriedFeature(), layers)
 }
-
 fun com.mapbox.maps.QueriedSourceFeature.toFLTQueriedSourceFeature(): QueriedSourceFeature {
   return QueriedSourceFeature(queriedFeature.toFLTQueriedFeature())
 }
@@ -449,10 +420,7 @@ fun com.mapbox.maps.MapDebugOptions.toFLTMapDebugOptions(): MapDebugOptions {
 }
 
 fun com.mapbox.maps.GlyphsRasterizationOptions.toFLTGlyphsRasterizationOptions(): GlyphsRasterizationOptions {
-  return GlyphsRasterizationOptions(
-    GlyphsRasterizationMode.values()[rasterizationMode.ordinal],
-    fontFamily
-  )
+  return GlyphsRasterizationOptions(GlyphsRasterizationMode.values()[rasterizationMode.ordinal], fontFamily)
 }
 
 fun com.mapbox.maps.MapOptions.toFLTMapOptions(context: Context): MapOptions {
@@ -515,11 +483,11 @@ fun com.mapbox.maps.CameraState.toCameraState(context: Context): CameraState = C
   padding = padding.toFLTEdgeInsets(context),
   pitch = pitch,
   zoom = zoom,
-  center = center.toMap()
+  center = center
 )
 
 fun com.mapbox.maps.CoordinateBounds.toFLTCoordinateBounds(): CoordinateBounds =
-  CoordinateBounds(southwest.toMap(), northeast.toMap(), infiniteBounds)
+  CoordinateBounds(southwest, northeast, infiniteBounds)
 
 fun com.mapbox.maps.CoordinateBoundsZoom.toFLTCoordinateBoundsZoom(): CoordinateBoundsZoom =
   CoordinateBoundsZoom(bounds.toFLTCoordinateBounds(), zoom)
@@ -534,7 +502,7 @@ fun com.mapbox.maps.CameraBounds.toFLTCameraBounds() = CameraBounds(
 
 fun com.mapbox.maps.CameraOptions.toFLTCameraOptions(context: Context): CameraOptions {
   return CameraOptions(
-    center = center?.let { mapOf("coordinates" to listOf(it.longitude(), it.latitude())) },
+    center = center,
     anchor = anchor?.toFLTScreenCoordinate(context),
     padding = padding?.toFLTEdgeInsets(context),
     zoom = zoom,
@@ -549,7 +517,6 @@ fun JSONObject.toMap(): Map<String?, Any?> = keys().asSequence().associateWith {
       val map = (0 until value.length()).associate { Pair(it.toString(), value[it]) }
       JSONObject(map).toMap().values.toList()
     }
-
     is JSONObject -> value.toMap()
     JSONObject.NULL -> null
     else -> value
