@@ -1,6 +1,7 @@
 package com.mapbox.maps.mapbox_maps.snapshot
 
 import android.content.Context
+import android.os.Looper
 import com.mapbox.maps.MapSnapshotOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Size
@@ -11,7 +12,9 @@ import com.mapbox.maps.Style
 import com.mapbox.maps.mapbox_maps.pigeons.*
 import com.mapbox.maps.mapbox_maps.toMbxImage
 import io.flutter.plugin.common.BinaryMessenger
+import kotlinx.coroutines.runBlocking
 import java.util.UUID
+import java.util.logging.Handler
 
 interface SnapshotControllerDelegate {
   fun getSnapshotter(id: String): Snapshotter
@@ -62,9 +65,31 @@ class SnapshotController(private val mapView: MapView, private val context: Cont
     return id
   }
 
+
+  private var runnable: Runnable? = null
+  private val handler = android.os.Handler(Looper.getMainLooper())
+
   override fun snapshot(callback: (Result<MbxImage?>) -> Unit) {
-    mapView.snapshot {
-      callback(Result.success(it?.toMbxImage()))
+    var image: MbxImage? = null
+    runnable = Runnable {
+      callback(Result.success(image))
+      runnable = null
+    }
+    try {
+      mapView.javaClass.classLoader?.loadClass("com.mapbox.maps.renderer.gl.PixelReader")?.let {clz->
+        val field = clz.getDeclaredField("supportsPbo")
+        field.isAccessible = true
+        field.set(null, false)
+      }
+      mapView.snapshot {
+        image = it?.toMbxImage()
+        runnable?.apply { handler.postDelayed(this, 500) }
+      }
+    } catch (t:Throwable){
+      mapView.snapshot {
+        image = it?.toMbxImage()
+        runnable?.apply { handler.postDelayed(this, 500) }
+      }
     }
   }
 

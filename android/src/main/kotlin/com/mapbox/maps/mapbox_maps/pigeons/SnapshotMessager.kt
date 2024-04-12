@@ -35,18 +35,6 @@ private fun wrapError(exception: Throwable): List<Any?> {
 private fun createConnectionError(channelName: String): FlutterError {
   return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")}
 
-/**
- * Error class for passing custom error details to Flutter via a thrown PlatformException.
- * @property code The error code.
- * @property message The error message.
- * @property details The error details. Must be a datatype supported by the api codec.
- */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
-) : Throwable()
-
 @Suppress("UNCHECKED_CAST")
 private object _SnapshotterMessagerCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -572,7 +560,7 @@ private object _SnapShotManagerCodec : StandardMessageCodec() {
 }
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface _SnapShotManager {
+open interface _SnapShotManager {
   fun create(options: MapSnapshotOptions, overlayOptions: SnapshotOverlayOptions): String
   fun snapshot(callback: (Result<MbxImage?>) -> Unit)
 
