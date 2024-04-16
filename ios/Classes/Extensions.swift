@@ -727,7 +727,7 @@ extension UIImage {
 
 extension MapboxMaps.CameraState {
     func toFLTCameraState() -> CameraState {
-        return CameraState(center: ["coordinates": [center.longitude, center.latitude]], padding: MbxEdgeInsets(top: padding.top, left: padding.left, bottom: padding.bottom, right: padding.right), zoom: zoom, bearing: bearing, pitch: pitch)
+        return CameraState(center: Point(center), padding: MbxEdgeInsets(top: padding.top, left: padding.left, bottom: padding.bottom, right: padding.right), zoom: zoom, bearing: bearing, pitch: pitch)
     }
 }
 
