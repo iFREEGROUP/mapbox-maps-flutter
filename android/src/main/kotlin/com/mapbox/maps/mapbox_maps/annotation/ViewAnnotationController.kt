@@ -132,7 +132,11 @@ class ViewAnnotationController(private val context: Context, private val mapView
     callback: (Result<ViewAnnotationOptions?>) -> Unit
   ) {
     try {
-      val view = mapView.findViewById<View?>(viewId.toInt())
+      val view = mapView.viewAnnotationManager.annotations.keys.find { it.id == viewId.toInt() }
+      if (view == null) {
+        callback(Result.success(null))
+        return
+      }
       val options = mapView.viewAnnotationManager.getViewAnnotationOptions(view)
       callback(Result.success(options?.toFLTViewAnnotationOptions()))
     } catch (e: Exception) {
@@ -147,8 +151,12 @@ class ViewAnnotationController(private val context: Context, private val mapView
     callback: (Result<Boolean>) -> Unit
   ) {
     try {
-      val view = mapView.findViewById<ImageView?>(viewId.toInt())
-      if (data != null) {
+      val view = mapView.viewAnnotationManager.annotations.keys.find { it.id == viewId.toInt() }
+      if (view == null) {
+        callback(Result.success(false))
+        return
+      }
+      if (data != null && view is ImageView) {
         view.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
       }
       val success =
@@ -161,7 +169,11 @@ class ViewAnnotationController(private val context: Context, private val mapView
 
   override fun removeViewAnnotation(viewId: Long, callback: (Result<Unit>) -> Unit) {
     try {
-      val view = mapView.findViewById<View?>(viewId.toInt())
+      val view = mapView.viewAnnotationManager.annotations.keys.find { it.id == viewId.toInt() }
+      if (view == null) {
+        callback(Result.success(Unit))
+        return
+      }
       mapView.viewAnnotationManager.removeViewAnnotation(view)
       callback(Result.success(Unit))
     } catch (e: Exception) {
