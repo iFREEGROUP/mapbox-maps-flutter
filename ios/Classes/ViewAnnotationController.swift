@@ -21,6 +21,13 @@ class ViewAnnotationController: NSObject, ViewAnnotationManager {
         onViewAnnotationUpdatedListener = OnViewAnnotationUpdatedListener(binaryMessenger: messager)
     }
     
+    func tearDown(messenger: FlutterBinaryMessenger) {
+        ViewAnnotationManagerSetup.setUp(binaryMessenger: messenger, api: nil)
+        onViewAnnotationClickListener = nil
+        onViewAnnotationUpdatedListener = nil
+        annotationMap.removeAll()
+    }
+
     func addViewAnnotation(data: FlutterStandardTypedData, options: ViewAnnotationOptions, completion: @escaping (Result<Int64, Error>) -> Void) {
         let uiImage = UIImage(data: data.data, scale: UIScreen.main.scale)
         if uiImage == nil {

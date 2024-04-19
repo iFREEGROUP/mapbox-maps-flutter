@@ -88,4 +88,16 @@ class SnapshotController: NSObject,_SnapShotManager,SnapshotControllerDelegate {
         })
         cancelables[id]?.removeAll()
     }
+
+    func tearDown(messenger: FlutterBinaryMessenger) {
+        _SnapShotManagerSetup.setUp(binaryMessenger: messenger, api: nil)
+        _SnapshotterMessagerSetup.setUp(binaryMessenger: messenger, api: nil)
+        onSnapshotStyleListener = nil
+        cancelables.keys.forEach { key in
+            remove(id: key)
+        }
+        snapshotterMap.removeAll()
+        cancelables.removeAll()
+        snapshotter = nil
+    }
 }

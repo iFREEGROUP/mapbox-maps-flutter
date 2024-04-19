@@ -119,6 +119,10 @@ class MapboxMapController: NSObject, FlutterPlatformView {
         }
     }
 
+    deinit {
+        print("调用deinit")
+    }
+
     private func subscribeToEvent(_ event: _MapEvent) {
         switch event {
         case .mapLoaded:
@@ -208,12 +212,23 @@ class MapboxMapController: NSObject, FlutterPlatformView {
         ProjectionSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
         _AnimationManagerSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
         _LocationComponentSettingsInterfaceSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
+
         GesturesSettingsInterfaceSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
+        gesturesController = nil
+
         LogoSettingsInterfaceSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
         AttributionSettingsInterfaceSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
         CompassSettingsInterfaceSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
         ScaleBarSettingsInterfaceSetup.setUp(binaryMessenger: proxyBinaryMessenger, api: nil)
+
         annotationController?.tearDown(messenger: proxyBinaryMessenger)
+        annotationController = nil
+
+        snapshotController?.tearDown(messenger: proxyBinaryMessenger)
+        snapshotController = nil
+
+        viewAnnotationController?.tearDown(messenger: proxyBinaryMessenger)
+        viewAnnotationController = nil
     }
 }
 
