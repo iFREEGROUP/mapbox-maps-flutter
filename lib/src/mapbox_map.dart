@@ -207,7 +207,6 @@ class MapboxMap extends ChangeNotifier {
 
   @override
   void dispose() {
-    _mapboxMapsPlatform.dispose();
     GestureListener.setup(null, binaryMessenger: _proxyBinaryMessenger);
 
     super.dispose();
