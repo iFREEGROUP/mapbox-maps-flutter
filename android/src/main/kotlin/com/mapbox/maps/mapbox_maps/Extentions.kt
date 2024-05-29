@@ -19,6 +19,44 @@ import java.io.ByteArrayOutputStream
 
 // FLT to Android
 
+fun GlyphsRasterizationMode.toGlyphsRasterizationMode(): com.mapbox.maps.GlyphsRasterizationMode {
+  return when (this) {
+    GlyphsRasterizationMode.NO_GLYPHS_RASTERIZED_LOCALLY -> com.mapbox.maps.GlyphsRasterizationMode.NO_GLYPHS_RASTERIZED_LOCALLY
+    GlyphsRasterizationMode.ALL_GLYPHS_RASTERIZED_LOCALLY -> com.mapbox.maps.GlyphsRasterizationMode.ALL_GLYPHS_RASTERIZED_LOCALLY
+    GlyphsRasterizationMode.IDEOGRAPHS_RASTERIZED_LOCALLY -> com.mapbox.maps.GlyphsRasterizationMode.IDEOGRAPHS_RASTERIZED_LOCALLY
+  }
+}
+fun GlyphsRasterizationOptions.toGlyphsRasterizationOptions(): com.mapbox.maps.GlyphsRasterizationOptions {
+  return com.mapbox.maps.GlyphsRasterizationOptions.Builder()
+    .rasterizationMode(rasterizationMode.toGlyphsRasterizationMode())
+    .fontFamily(fontFamily)
+    .build()
+}
+fun MapSnapshotOptions.toSnapshotOptions(context: Context): com.mapbox.maps.MapSnapshotOptions {
+  return com.mapbox.maps.MapSnapshotOptions.Builder()
+    .size(size.toSize(context))
+    .pixelRatio(pixelRatio.toFloat())
+    .glyphsRasterizationOptions(glyphsRasterizationOptions?.toGlyphsRasterizationOptions())
+    .build()
+}
+
+fun MapSnapshotOptions.toSnapshotOverlayOptions(): com.mapbox.maps.SnapshotOverlayOptions {
+  return com.mapbox.maps.SnapshotOverlayOptions(
+    showLogo = showsLogo ?: true,
+    showAttributes = showsAttribution ?: true
+  )
+}
+fun Size.toSize(context: Context): com.mapbox.maps.Size {
+  return com.mapbox.maps.Size(width.toDevicePixels(context), height.toDevicePixels(context))
+}
+fun TileCoverOptions.toTileCoverOptions(): com.mapbox.maps.TileCoverOptions {
+  return com.mapbox.maps.TileCoverOptions.Builder()
+    .tileSize(tileSize?.toShort())
+    .maxZoom(maxZoom?.toByte())
+    .minZoom(minZoom?.toByte())
+    .roundZoom(roundZoom)
+    .build()
+}
 fun ModelScaleMode.toModelScaleMode(): com.mapbox.maps.plugin.ModelScaleMode {
   return when (this) {
     ModelScaleMode.VIEWPORT -> com.mapbox.maps.plugin.ModelScaleMode.VIEWPORT
@@ -44,7 +82,6 @@ fun StyleProjectionName.toProjectionName(): ProjectionName {
 fun StyleProjection.toProjection(): com.mapbox.maps.extension.style.projection.generated.Projection {
   return com.mapbox.maps.extension.style.projection.generated.Projection(name.toProjectionName())
 }
-
 fun TransitionOptions.toStyleTransition(): StyleTransition {
   val builder = StyleTransition.Builder()
   duration?.let {
@@ -56,14 +93,12 @@ fun TransitionOptions.toStyleTransition(): StyleTransition {
 
   return builder.build()
 }
-
 fun Anchor.toAnchor(): com.mapbox.maps.extension.style.layers.properties.generated.Anchor {
   return when (this) {
     Anchor.MAP -> com.mapbox.maps.extension.style.layers.properties.generated.Anchor.MAP
     Anchor.VIEWPORT -> com.mapbox.maps.extension.style.layers.properties.generated.Anchor.VIEWPORT
   }
 }
-
 fun FlatLight.toFlatLight(): com.mapbox.maps.extension.style.light.generated.FlatLight {
   return flatLight(id) {
     anchor?.let {
@@ -186,7 +221,6 @@ fun RenderedQueryGeometry.toRenderedQueryGeometry(context: Context): com.mapbox.
         )
       )
     }
-
     Type.LIST -> {
       val array: Array<Array<Double>> =
         Gson().fromJson(value, Array<Array<Double>>::class.java)
@@ -196,7 +230,6 @@ fun RenderedQueryGeometry.toRenderedQueryGeometry(context: Context): com.mapbox.
         }.toList()
       )
     }
-
     Type.SCREEN_COORDINATE -> {
       val pointArray = Gson().fromJson(
         value,
@@ -251,36 +284,6 @@ fun Map<String?, Any?>.toPoint(): Point {
   return Point.fromLngLat(longitude, latitude, boundingBox)
 }
 
-fun Map<String?, Any?>.toPoints(): List<Point> {
-  return (this["coordinates"] as List<List<Double>>).map {
-    Point.fromLngLat(it.first(), it.last())
-  }
-}
-
-fun Map<String?, Any?>.toPointsList(): List<List<Point>> {
-  return (this["coordinates"] as List<List<List<Double>>>).map {
-    it.map {
-      Point.fromLngLat(it.first(), it.last())
-    }
-  }
-}
-
-fun Map<String?, Any?>.toLineString(): LineString {
-  return LineString.fromLngLats(
-    (this["coordinates"] as List<List<Double>>).map {
-      Point.fromLngLat(it.first(), it.last())
-    }
-  )
-}
-
-fun Map<String?, Any?>.toPolygon(): Polygon {
-  return Polygon.fromLngLats(
-    (this["coordinates"] as List<List<List<Double>>>).map {
-      it.map { Point.fromLngLat(it.first(), it.last()) }
-    }
-  )
-}
-
 fun CoordinateBounds.toCoordinateBounds() =
   com.mapbox.maps.CoordinateBounds(southwest, northeast, infiniteBounds)
 
@@ -323,25 +326,32 @@ fun Map<String?, Any?>.toGeometry(): Geometry {
     this["type"] == "Point" -> {
       return Point.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "Polygon" -> {
       return Polygon.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "MultiPolygon" -> {
       return MultiPolygon.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "MultiPoint" -> {
       return MultiPoint.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "MultiLineString" -> {
       return MultiLineString.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "LineString" -> {
       return LineString.fromJson(Gson().toJson(this))
     }
+
     this["type"] == "GeometryCollection" -> {
       return GeometryCollection.fromJson(Gson().toJson(this))
     }
-    else -> throw(RuntimeException("Unsupported Geometry: ${Gson().toJson(this)}"))
+
+    else -> throw (RuntimeException("Unsupported Geometry: ${Gson().toJson(this)}"))
   }
 }
 
@@ -350,6 +360,10 @@ fun Number.toDevicePixels(context: Context): Float {
 }
 
 // Android to FLT
+
+fun com.mapbox.maps.CanonicalTileID.toFLTCanonicalTileID(): CanonicalTileID {
+  return CanonicalTileID(z = z.toLong(), x = x.toLong(), y = y.toLong())
+}
 
 fun com.mapbox.common.LoggingLevel.toFLTLoggingLevel(): LoggingLevel {
   return when (this) {
@@ -377,12 +391,16 @@ fun ProjectionName.toFLTProjectionName(): StyleProjectionName {
   return when (this) {
     ProjectionName.GLOBE -> StyleProjectionName.GLOBE
     ProjectionName.MERCATOR -> StyleProjectionName.MERCATOR
-    else -> { throw java.lang.RuntimeException("Projection $this is not supported.") }
+    else -> {
+      throw java.lang.RuntimeException("Projection $this is not supported.")
+    }
   }
 }
+
 fun Projection.toFLTProjection(): StyleProjection {
   return StyleProjection(name.toFLTProjectionName())
 }
+
 fun com.mapbox.maps.StyleObjectInfo.toFLTStyleObjectInfo(): StyleObjectInfo {
   return StyleObjectInfo(id, type)
 }
@@ -407,6 +425,7 @@ fun com.mapbox.maps.QueriedFeature.toFLTQueriedFeature(): QueriedFeature {
 fun com.mapbox.maps.QueriedRenderedFeature.toFLTQueriedRenderedFeature(): QueriedRenderedFeature {
   return QueriedRenderedFeature(queriedFeature.toFLTQueriedFeature(), layers)
 }
+
 fun com.mapbox.maps.QueriedSourceFeature.toFLTQueriedSourceFeature(): QueriedSourceFeature {
   return QueriedSourceFeature(queriedFeature.toFLTQueriedFeature())
 }
@@ -438,33 +457,6 @@ fun com.mapbox.maps.MapOptions.toFLTMapOptions(context: Context): MapOptions {
 
 fun com.mapbox.maps.Size.toFLTSize(context: Context): Size {
   return Size(width.toLogicalPixels(context), height.toLogicalPixels(context))
-}
-
-fun Point.toMap(): Map<String?, Any> {
-  val map = mutableMapOf<String?, Any>()
-  map["coordinates"] = coordinates()
-  bbox()?.let {
-    map["bbox"] = mapOf(Pair("southwest", it.southwest()), Pair("northeast", it.northeast()))
-  }
-  return map
-}
-
-fun Polygon.toMap(): Map<String?, Any> {
-  val map = mutableMapOf<String?, Any>()
-  map["coordinates"] = coordinates().map { it.map { it.coordinates() } }
-  bbox()?.let {
-    map["bbox"] = mapOf(Pair("southwest", it.southwest()), Pair("northeast", it.northeast()))
-  }
-  return map
-}
-
-fun LineString.toMap(): Map<String?, Any> {
-  val map = mutableMapOf<String?, Any>()
-  map["coordinates"] = coordinates().map { it.coordinates() }
-  bbox()?.let {
-    map["bbox"] = mapOf(Pair("southwest", it.southwest()), Pair("northeast", it.northeast()))
-  }
-  return map
 }
 
 fun com.mapbox.maps.ScreenCoordinate.toFLTScreenCoordinate(context: Context): ScreenCoordinate {
@@ -517,6 +509,7 @@ fun JSONObject.toMap(): Map<String?, Any?> = keys().asSequence().associateWith {
       val map = (0 until value.length()).associate { Pair(it.toString(), value[it]) }
       JSONObject(map).toMap().values.toList()
     }
+
     is JSONObject -> value.toMap()
     JSONObject.NULL -> null
     else -> value

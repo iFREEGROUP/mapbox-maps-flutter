@@ -1,5 +1,14 @@
 ### main
 
+* Update Maps SDK to 11.4.0.
+
+### 2.0.0-rc.1
+
+* Update Maps SDK to 11.4.0-rc.2.
+
+### 2.0.0-beta.1
+
+* Introduce experimental `RasterArraySource`, note that `rasterLayers` is a get-only property and cannot be set.
 * Introduce `TileCacheBudget`, a property to set per-source cache budgets in either megabytes or tiles. 
 * Expose `iconColorSaturation`, `rasterArrayBand`, `rasterElevation`, `rasterEmissiveStrength`, `hillshadeEmissiveStrength`, and `fillExtrusionEmissiveStrength` on their respective layers. 
 * Mark `MapboxMapsOptions.get/setWorldview()` and `MapboxMapsOptions.get/setLanguage()` as experimental.
@@ -15,8 +24,53 @@ mapboxMap?.location.updateSettings(LocationComponentSettings(
         LocationPuck(locationPuck2D: DefaultLocationPuck2D(topImage: list, shadowImage: Uint8List.fromList([]))))
 );
 ```
+##### Snapshots
+
+###### Standalone snapshotter
+
+Show multiple maps at the same time with no performance penalty. With the all new `Snapshotter` you can get image snapshots of the map, styled the same way as `MapWidget`.
+
+The `Snapshotter` class is highly configurable. You can set the final result at the time of construction using the `MapSnapshotOptions`. Once you've configured your snapshot, you can start the snapshotting process.
+
+One of the key features of the `Snapshotter` class is the `style` object. This object can be manipulated to set different styles for your snapshot, as well as to apply runtime styling to the style, giving you the flexibility to create a snapshot that fits your needs.
+
+```dart
+final snapshotter = await Snapshotter.create(
+  options: MapSnapshotOptions(
+      size: Size(width: 400, height: 400),
+      pixelRatio: MediaQuery.of(context).devicePixelRatio),
+  onStyleLoadedListener: (_) {
+    // apply runtime styling
+    final layer = CircleLayer(id: "circle-layer", sourceId: "poi-source");
+    snapshotter?.style.addLayer(layer);
+  },
+);
+snapshotter.style.setStyleURI(MapboxStyles.STANDARD);
+snapshotter.setCamera(CameraOptions(center: Point(...)));
+
+...
+
+final snapshotImage = await snapshotter.start()
+```
+##### Map widget snapshotting
+
+Create snapshots of the map displayed in the `MapWidget` with `MapboxMap.snapshot()`. This new feature allows you to capture a static image of the current map view.
+
+The `snapshot()` method captures the current state of the Mapbox map, including all visible layers, markers, and user interactions.
+
+To use the snapshot() method, simply call it on your Mapbox map instance. The method will return a Future that resolves to the image of the current map view.
+
+```dart
+final snapshotImage = await mapboxMap.snapshot();
+```
+
+Please note that the `snapshot()` method works best if the Mapbox Map is fully loaded before capturing an image. If the map is not fully loaded, the method might return a blank image.
 
 #### ⚠️ Breaking changes
+
+##### Leveraging [Turf](https://pub.dev/packages/turf)'s geometries as a replacement for Map<String, Any?>
+
+You now have the convenience of directly initializing annotations with Turf's geometries, eliminating the need for converting geometry to JSON.
 
 ##### Geographical position represented by `Point`s
 
@@ -60,10 +114,61 @@ onTapListener: { (context)
     ...
 }
 ```
+##### Creating an annotation with a given geometry
+*Before:*
+```dart
+PointAnnotationOptions(
+  geometry: Point(
+    coordinates: Position(0.381457, 6.687337)
+  ).toJson()
+)
+PolygonAnnotationOptions(
+  geometry: Polygon(coordinates: [
+    [
+      Position(-3.363937, -10.733102),
+      Position(1.754703, -19.716317),
+      Position(-15.747196, -21.085074),
+      Position(-3.363937, -10.733102)
+    ]
+  ]).toJson()
+)
+PolylineAnnotationOptions(
+  geometry: LineString(coordinates: [
+    Position(1.0, 2.0), 
+    Position(10.0, 20.0)
+  ]).toJson()
+)
+```
 
+*After:*
+```dart
+PointAnnotationOptions(
+  geometry: Point(
+    coordinates: Position(0.381457, 6.687337)
+  )
+)
+PolygonAnnotationOptions(
+  geometry: Polygon(coordinates: [
+    [
+      Position(-3.363937, -10.733102),
+      Position(1.754703, -19.716317),
+      Position(-15.747196, -21.085074),
+      Position(-3.363937, -10.733102)
+    ]
+  ])
+)
+PolylineAnnotationOptions(
+  geometry: LineString(coordinates: [
+    Position(1.0, 2.0), 
+    Position(10.0, 20.0)
+  ])
+)
+```
 
 * Fix camera center not applied from map init options.
 * [iOS] Free up resources upon map widget disposal. This should help to reduce the amount of used memory when previously shown map widget is removed from the widget tree.
+* Fix multi-word enum cases decoding/encoding when being sent to/from the platform side.
+* [Android] Add Gradle 8 compatibility.
 
 ### 1.1.0
 

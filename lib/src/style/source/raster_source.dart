@@ -5,7 +5,7 @@ part of mapbox_maps_flutter;
 /// @see [The online documentation](https://docs.mapbox.com/mapbox-gl-js/style-spec/sources/#raster)
 class RasterSource extends Source {
   RasterSource({
-    required id,
+    required String id,
     String? url,
     List<String?>? tiles,
     List<double?>? bounds,
@@ -300,7 +300,7 @@ class RasterSource extends Source {
         properties["tileSize"] = _tileSize;
       }
       if (_scheme != null) {
-        properties["scheme"] = _scheme.toString().split('.').last.toLowerCase();
+        properties["scheme"] = _scheme?.name.toLowerCase().replaceAll("_", "-");
       }
       if (_attribution != null) {
         properties["attribution"] = _attribution;
