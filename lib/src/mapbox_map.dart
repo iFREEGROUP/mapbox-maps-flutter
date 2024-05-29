@@ -66,9 +66,6 @@ class MapboxMap extends ChangeNotifier {
   OnMapLongTapListener? onMapLongTapListener;
   OnMapScrollListener? onMapScrollListener;
 
-  /// snapshot manager
-  late _SnapShotManager snapshotter = _SnapShotManager(binaryMessenger: _proxyBinaryMessenger);
-
   /// view annotation
   late ViewAnnotationManager viewAnnotationManager =
       ViewAnnotationManager(binaryMessenger: _proxyBinaryMessenger);

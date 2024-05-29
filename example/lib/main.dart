@@ -12,7 +12,6 @@ import 'package:mapbox_maps_example/polygon_annotations.dart';
 import 'package:mapbox_maps_example/polyline_annotations.dart';
 import 'package:mapbox_maps_example/snapshotter.dart';
 import 'package:mapbox_maps_example/traffic-route-line.dart';
-import 'package:mapbox_maps_example/snapshot.dart';
 import 'package:mapbox_maps_example/tile_json.dart';
 import 'package:mapbox_maps_example/vector_tile_source.dart';
 import 'package:mapbox_maps_example/view_annotation.dart';
@@ -48,7 +47,6 @@ final List<ExamplePage> _allPages = <ExamplePage>[
   AnimatedRoutePage(),
   SnapshotterPage(),
   TrafficRouteLinePage(),
-  SnapshotPage(),
   ViewAnnotationPage(),
 ];
 

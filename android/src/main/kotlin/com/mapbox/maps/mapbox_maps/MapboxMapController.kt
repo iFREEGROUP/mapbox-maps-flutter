@@ -15,6 +15,7 @@ import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.mapbox_maps.annotation.AnnotationController
+import com.mapbox.maps.mapbox_maps.annotation.ViewAnnotationController
 import com.mapbox.maps.mapbox_maps.pigeons.AttributionSettingsInterface
 import com.mapbox.maps.mapbox_maps.pigeons.CompassSettingsInterface
 import com.mapbox.maps.mapbox_maps.pigeons.GesturesSettingsInterface
@@ -26,8 +27,6 @@ import com.mapbox.maps.mapbox_maps.pigeons._AnimationManager
 import com.mapbox.maps.mapbox_maps.pigeons._CameraManager
 import com.mapbox.maps.mapbox_maps.pigeons._LocationComponentSettingsInterface
 import com.mapbox.maps.mapbox_maps.pigeons._MapInterface
-import com.mapbox.maps.mapbox_maps.annotation.ViewAnnotationController
-import com.mapbox.maps.mapbox_maps.snapshot.SnapshotController
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -61,7 +60,6 @@ class MapboxMapController(
   private val attributionController: AttributionController
   private val scaleBarController: ScaleBarController
   private val compassController: CompassController
-  private val snapshotController: SnapshotController
   private val viewAnnotationController: ViewAnnotationController
 
   private val proxyBinaryMessenger = ProxyBinaryMessenger(messenger, "$channelSuffix")
@@ -140,7 +138,6 @@ class MapboxMapController(
     attributionController = AttributionController(mapView)
     scaleBarController = ScaleBarController(mapView)
     compassController = CompassController(mapView)
-    snapshotController = SnapshotController(mapView,context)
     viewAnnotationController = ViewAnnotationController(context, mapView)
 
     changeUserAgent(pluginVersion)
@@ -160,7 +157,6 @@ class MapboxMapController(
     AttributionSettingsInterface.setUp(proxyBinaryMessenger, attributionController)
     ScaleBarSettingsInterface.setUp(proxyBinaryMessenger, scaleBarController)
     CompassSettingsInterface.setUp(proxyBinaryMessenger, compassController)
-    snapshotController.setup(proxyBinaryMessenger)
     viewAnnotationController.setup(proxyBinaryMessenger)
 
     methodChannel = MethodChannel(proxyBinaryMessenger, "plugins.flutter.io")
@@ -191,7 +187,6 @@ class MapboxMapController(
     CompassSettingsInterface.setUp(proxyBinaryMessenger, null)
     ScaleBarSettingsInterface.setUp(proxyBinaryMessenger, null)
     AttributionSettingsInterface.setUp(proxyBinaryMessenger, null)
-    snapshotController.dispose(proxyBinaryMessenger)
     viewAnnotationController.dispose(proxyBinaryMessenger)
   }
 

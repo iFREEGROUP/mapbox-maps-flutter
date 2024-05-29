@@ -105,7 +105,7 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
         final manager =
             await mapboxMap?.annotations.createPointAnnotationManager(id: 'pointLayerId');
         pointAnnotation = await manager?.create(PointAnnotationOptions(
-          geometry: currentState.center.toJson(),
+          geometry: currentState.center,
           textField: 'point',
           textColor: Colors.red.value,
           textSize: 20,

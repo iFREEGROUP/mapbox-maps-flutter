@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:turf/polyline.dart';
+import 'package:turf/polyline.dart' hide Point, LineString;
 
 Point createRandomPoint() {
   return Point(coordinates: createRandomPosition());

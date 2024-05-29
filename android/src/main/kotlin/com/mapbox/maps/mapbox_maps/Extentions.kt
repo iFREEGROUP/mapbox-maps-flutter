@@ -583,7 +583,7 @@ fun com.mapbox.maps.ViewAnnotationOptions.toFLTViewAnnotationOptions(): ViewAnno
 
 fun com.mapbox.maps.AnnotatedFeature.toFLTAnnotatedFeature(): AnnotatedFeature {
   if (this.isGeometry) {
-    val value = (this.geometry as Point).toMap()
+    val value = this.geometry as Point
     return AnnotatedFeature(value, AnnotatedFeatureType.GEOMETRY)
   }
   val feature = this.annotatedLayerFeature
@@ -603,4 +603,13 @@ fun com.mapbox.maps.viewannotation.ViewAnnotationUpdateMode.toFLTViewAnnotationU
     return ViewAnnotationUpdateMode.MAP_FIXED_DELAY
   }
   return ViewAnnotationUpdateMode.MAP_SYNCHRONIZED
+}
+
+fun Point.toMap(): Map<String?, Any> {
+  val map = mutableMapOf<String?, Any>()
+  map["coordinates"] = coordinates()
+  bbox()?.let {
+    map["bbox"] = mapOf(Pair("southwest", it.southwest()), Pair("northeast", it.northeast()))
+  }
+  return map
 }
