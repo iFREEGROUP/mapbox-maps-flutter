@@ -883,12 +883,12 @@ extension ViewAnnotationOptions {
         if feature == nil {
             return nil
         }
-        
+
         let view = UIImageView(image: uiImage)
         if width != nil && height != nil {
             view.frame = CGRect(x: 0, y: 0, width: width!, height: height!)
         }
-        
+
         let annotation = ViewAnnotation(annotatedFeature: feature!, view: view)
         annotation.allowOverlap = allowOverlap ?? false
         annotation.allowOverlapWithPuck = allowOverlapWithPuck ?? false
