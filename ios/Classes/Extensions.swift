@@ -164,7 +164,7 @@ extension ScreenCoordinate {
     func toScreenCoordinate() -> ScreenCoordinate {
         return ScreenCoordinate(x: self.x, y: self.y)
     }
-    
+
     func toCGPoint() -> CGPoint {
         return CGPoint(x: self.x, y: self.y)
     }
@@ -202,7 +202,7 @@ extension TransitionOptions {
             delay: self.delay.map(TimeInterval.init),
             enablePlacementTransitions: self.enablePlacementTransitions)
     }
-    
+
     func toStyleTransition() -> StyleTransition {
         return StyleTransition(
             duration: self.duration.map { Double($0) / 1000.0 } ?? 0,
@@ -293,7 +293,7 @@ extension Feature {
     func toMap() -> [String: Any] {
         let jsonData = try! JSONEncoder().encode(geoJSONObject)
         let json = String(data: jsonData, encoding: .utf8)
-        
+
         return convertStringToDictionary(properties: json!)
     }
 }
@@ -394,9 +394,9 @@ extension MapboxMaps.CameraOptions {
             left: padding!.left,
             bottom: padding!.bottom,
             right: padding!.right) : nil
-        
+
         let anchor = self.anchor != nil ? ScreenCoordinate(x: self.anchor!.x, y: self.anchor!.y) : nil
-        
+
         return CameraOptions(
             center: center.map(Point.init),
             padding: padding,
@@ -444,7 +444,7 @@ extension MapboxMaps.StylePropertyValue {
 }
 
 extension MapboxMaps.Geometry {
-    
+
     func toMap() -> [String: Any] {
         switch self {
         case .point(let point):
@@ -478,7 +478,7 @@ extension CLLocationCoordinate2D {
     func toDict() -> [String: Any] {
         return [COORDINATES: [self.longitude, self.latitude]]
     }
-    
+
     func toFLTScreenCoordinate() -> ScreenCoordinate {
         return ScreenCoordinate(x: longitude, y: latitude)
     }
@@ -487,20 +487,20 @@ extension CLLocationCoordinate2D {
 func convertDictionaryToCLLocationCoordinate2D(dict: [String?: Any?]?) -> CLLocationCoordinate2D? {
     if dict == nil { return nil}
     let coordinates = dict![COORDINATES] as? [Any]
-    
+
     return CLLocationCoordinate2D(latitude: coordinates?.last as? CLLocationDegrees ?? 0, longitude: coordinates?.first as? CLLocationDegrees ?? 0)
 }
 
 func convertDictionaryToPolygon(dict: [String?: Any?]) -> Polygon {
     let coordinates = dict[COORDINATES] as? [[[CLLocationDegrees]]]
     let coordinatesList = coordinates.map({$0.map({$0.map({CLLocationCoordinate2D(latitude: $0.last!, longitude: $0.first!)})})})!
-    
+
     return Polygon(coordinatesList)
 }
 
 func convertDictionaryToPolyline(dict: [String?: Any?]) -> LineString {
     let coordinates = dict[COORDINATES] as? [[CLLocationDegrees]]
-    
+
     let coordinatesList = coordinates.map({$0.map({CLLocationCoordinate2D(latitude: $0.last!, longitude: $0.first!)})})!
     return LineString(coordinatesList)
 }
@@ -514,7 +514,7 @@ func convertDictionaryToCGPoint(dict: [String?: Any?]?) -> CGPoint? {
 func convertStringToDictionary(properties: String) -> [String: Any] {
     let data = properties.data(using: String.Encoding.utf8)!
     let jsonObject = try? JSONSerialization.jsonObject(with: data, options: [])
-    
+
     guard let result = jsonObject as? [String: Any] else {return [:]}
     return result
 }
@@ -522,7 +522,7 @@ func convertStringToDictionary(properties: String) -> [String: Any] {
 func convertStringToArray(properties: String) -> [Any] {
     let data = properties.data(using: String.Encoding.utf8)!
     let jsonObject = try? JSONSerialization.jsonObject(with: data, options: [])
-    
+
     guard let result = jsonObject as? [Any] else {return []}
     return result
 }
@@ -532,7 +532,7 @@ func convertDictionaryToString(dict: [String?: Any?]?) -> String {
     if dict == nil { return result }
     do {
         let jsonData = try JSONSerialization.data(withJSONObject: dict!, options: JSONSerialization.WritingOptions.init(rawValue: 0))
-        
+
         if let JSONString = String(data: jsonData, encoding: String.Encoding.utf8) {
             result = JSONString
         }
@@ -563,16 +563,16 @@ func convertDictionaryToFeature(dict: [String?: Any?]) -> Feature? {
 }
 
 func uiColorFromHex(rgbValue: Int64) -> UIColor {
-    
+
     // &  binary AND operator to zero out other color values
     // >>  bitwise right shift operator
     // Divide by 0xFF because UIColor takes CGFloats between 0.0 and 1.0
-    
+
     let red =   CGFloat((rgbValue & 0xFF0000) >> 16) / 0xFF
     let green = CGFloat((rgbValue & 0x00FF00) >> 8) / 0xFF
     let blue =  CGFloat(rgbValue & 0x0000FF) / 0xFF
     let alpha = CGFloat((rgbValue & 0xFF000000) >> 24) / 0xFF
-    
+
     return UIColor(red: red, green: green, blue: blue, alpha: alpha)
 }
 
@@ -583,26 +583,26 @@ func toRgb(alpha: Int, red: Int, green: Int, blue: Int) -> Int {
 
 extension UIColor {
     func rgb() -> Int {
-        var fRed: CGFloat = 0
-        var fGreen: CGFloat = 0
-        var fBlue: CGFloat = 0
-        var fAlpha: CGFloat = 0
-        if self.getRed(&fRed, green: &fGreen, blue: &fBlue, alpha: &fAlpha) {
+         var fRed: CGFloat = 0
+         var fGreen: CGFloat = 0
+         var fBlue: CGFloat = 0
+         var fAlpha: CGFloat = 0
+         if self.getRed(&fRed, green: &fGreen, blue: &fBlue, alpha: &fAlpha) {
             return toRgb(
                 alpha: Int(fAlpha * 255.0),
                 red: Int(fRed * 255.0),
                 green: Int(fGreen * 255.0),
                 blue: Int(fBlue * 255.0)
             )
-        } else {
-            // Could not extract RGBA components: return 0
-            return 0
-        }
-    }
+         } else {
+             // Could not extract RGBA components: return 0
+             return 0
+         }
+     }
 }
 
 extension RawRepresentable where RawValue == UInt {
-    
+
     var nsNumberValue: NSNumber {
         NSNumber(value: rawValue)
     }
@@ -612,14 +612,14 @@ extension Double {
     internal var CGFloat: CGFloat {
         CoreGraphics.CGFloat(self)
     }
-    
+
     internal var CLLocationDirection: CLLocationDirection {
         CoreLocation.CLLocationDirection(self)
     }
 }
 
 extension String {
-    
+
     subscript(_ nsRange: NSRange) -> String? {
         guard let range = Range(nsRange, in: self) else { return nil }
         return String(self[range])
@@ -637,33 +637,33 @@ extension StyleColor {
             return nil
         }
     }
-    
+
     init?(rgb: Int64?) {
         guard let rgb else { return nil }
-        
+
         self.init(uiColorFromHex(rgbValue: rgb))
     }
-    
+
     init(rgb: Int64) {
         self.init(uiColorFromHex(rgbValue: rgb))
     }
-    
+
 }
 
 /// - Note: Current supports HSL(A) and RGB(A) color values.
 struct SupportedStyleColor: Encodable {
     var r, g, b, a: Double
-    
+
     private enum StyleColorConversionError: Swift.Error {
         case invalidStyleColor
         case unsupportedStyleColor
     }
-    
+
     init(styleColor: StyleColor) throws {
         let pattern = #"((?<tag>rgb|rgba|hsl|hsla))\((?<value>.*)\)"#
         let regex = try NSRegularExpression(pattern: pattern)
         let colorString = styleColor.rawValue
-        
+
         guard let match = regex.firstMatch(in: colorString, range: NSRange(colorString.startIndex..<colorString.endIndex, in: colorString)) else {
             throw StyleColorConversionError.unsupportedStyleColor
         }
@@ -673,7 +673,7 @@ struct SupportedStyleColor: Encodable {
         else {
             throw StyleColorConversionError.invalidStyleColor
         }
-        
+
         try self.init(
             tag: tag,
             values: valueString.components(separatedBy: ",").compactMap {
@@ -683,25 +683,25 @@ struct SupportedStyleColor: Encodable {
                 return doubleValue
             })
     }
-    
+
     private init(tag: String, values: [Double]) throws {
         var values = values
-        
+
         var r = values.removeFirst()
         var g = values.removeFirst()
         var b = values.removeFirst()
-        
+
         if tag == "hsl" || tag == "hsla" {
             let (h, s, l) = (r, g, b)
-            
+
             guard case 0...360 = h, case 0...1 = s, case 0...1 = l else {
                 throw StyleColorConversionError.invalidStyleColor
             }
-            
+
             let chroma = (1 - abs((2 * l) - 1)) * s
             let h60 = h / 60.0
             let x = chroma * (1 - abs((h60.truncatingRemainder(dividingBy: 2)) - 1))
-            
+
             if h60 < 1 {
                 r = chroma
                 g = x
@@ -721,9 +721,9 @@ struct SupportedStyleColor: Encodable {
                 r = chroma
                 b = x
             }
-            
+
             let m = l - (chroma / 2)
-            
+
             r = r + m
             g = g + m
             b = b + m
@@ -732,13 +732,13 @@ struct SupportedStyleColor: Encodable {
             g /= 255
             b /= 255
         }
-        
+
         self.r = r
         self.g = g
         self.b = b
         self.a = values.first ?? 1.0
     }
-    
+
     var intValue: Int {
         let red = Int(r * 255.0)
         let green = Int(g * 255.0)
@@ -752,14 +752,14 @@ struct SupportedStyleColor: Encodable {
 // MARK: Style Projection
 
 extension MapboxMaps.StyleProjectionName {
-    
+
     init(_ fltValue: StyleProjectionName) {
         switch fltValue {
         case .mercator: self = .mercator
         case .globe: self = .globe
         }
     }
-    
+
     func toFLTStyleProjectionName() -> StyleProjectionName? {
         switch self {
         case .globe: return .globe
@@ -770,7 +770,7 @@ extension MapboxMaps.StyleProjectionName {
 }
 
 extension MapboxMaps.StyleProjection {
-    
+
     func toFLTStyleProjection() -> StyleProjection? {
         name.toFLTStyleProjectionName().map(StyleProjection.init(name:))
     }
@@ -780,24 +780,23 @@ extension MapboxMaps.StyleProjection {
 
 infix operator ?=
 extension Optional {
-    
+
     static func ?= (lhs: inout Self, rhs: Self) {
         guard lhs == nil else { return }
         lhs = rhs
     }
 }
 
-extension UIImage {
-    
-    func toFLTMbxImage() -> MbxImage {
-        let data = FlutterStandardTypedData(bytes: pngData()!)
-        return MbxImage(width: Int64(size.width * scale), height: Int64(size.height * scale), data: data)
-    }
-}
-
-extension MapboxMaps.CameraState {
-    func toFLTCameraState() -> CameraState {
-        return CameraState(center: Point(center), padding: MbxEdgeInsets(top: padding.top, left: padding.left, bottom: padding.bottom, right: padding.right), zoom: zoom, bearing: bearing, pitch: pitch)
+// MARK: Result
+extension Result where Failure == any Error {
+    init(code: String, catchingFlutter body: () throws -> Success) {
+        self.init {
+            do {
+                return try body()
+            } catch {
+                throw FlutterError(code: code, message: error.localizedDescription, details: [NSUnderlyingErrorKey: error])
+            }
+        }
     }
 }
 
