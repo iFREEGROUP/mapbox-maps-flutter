@@ -82,4 +82,7 @@ dependencies {
 
     implementation "androidx.annotation:annotation:1.7.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.0"
+
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation "com.airbnb.android:lottie:6.4.1"
 }

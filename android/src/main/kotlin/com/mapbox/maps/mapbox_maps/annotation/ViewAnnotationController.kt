@@ -5,12 +5,17 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import com.airbnb.lottie.LottieAnimationView
 import com.mapbox.geojson.Point
+import com.mapbox.maps.AnnotatedFeature
 import com.mapbox.maps.MapView
 import com.mapbox.maps.ScreenCoordinate
+import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.ViewAnnotationAnchorConfig
 import com.mapbox.maps.mapbox_maps.R
 import com.mapbox.maps.mapbox_maps.pigeons.*
+import com.mapbox.maps.mapbox_maps.toAnnotatedFeature
 import com.mapbox.maps.mapbox_maps.toAnnotatedLayerFeature
 import com.mapbox.maps.mapbox_maps.toFLTScreenCoordinate
 import com.mapbox.maps.mapbox_maps.toFLTViewAnnotationAnchorConfig
@@ -83,17 +88,37 @@ class ViewAnnotationController(private val context: Context, private val mapView
     options: ViewAnnotationOptions,
     callback: (Result<Long>) -> Unit
   ) {
+//    mapView.viewAnnotationManager.addViewAnnotation(
+//      R.layout.view_annotation,
+//      options.toViewAnnotationOption()
+//    ).also { view ->
+//      view.id = View.generateViewId()
+//      (view as ImageView).apply {
+//        setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
+//      }
+//      view.setOnClickListener {
+//        viewAnnotationClickListener.onViewAnnotationClick(it.id.toLong()) {}
+//      }
+//      callback(Result.success(view.id.toLong()))
+//    }
     mapView.viewAnnotationManager.addViewAnnotation(
-      R.layout.view_annotation,
-      options.toViewAnnotationOption()
+      R.layout.exp_marker,
+      com.mapbox.maps.ViewAnnotationOptions.Builder().visible(true).allowOverlap(true).annotatedFeature(
+        options.annotatedFeature?.toAnnotatedFeature()
+      ).variableAnchors(
+        arrayListOf(
+          ViewAnnotationAnchorConfig.Builder().anchor(ViewAnnotationAnchor.BOTTOM).offsetY(10.0).build()
+        )
+      ).build(),
     ).also { view ->
       view.id = View.generateViewId()
-      (view as ImageView).apply {
-        setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
-      }
-      view.setOnClickListener {
-        viewAnnotationClickListener.onViewAnnotationClick(it.id.toLong()) {}
-      }
+//      (view as ImageView).apply {
+//        setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
+//      }
+//      view.setOnClickListener {
+//        viewAnnotationClickListener.onViewAnnotationClick(it.id.toLong()) {}
+//      }
+      view.findViewById<TextView>(R.id.marker_text).text = "这是自定义view这是自定义view这是自定义view这是自定义view这是自定义view"
       callback(Result.success(view.id.toLong()))
     }
   }
