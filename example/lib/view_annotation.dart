@@ -122,7 +122,7 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
             height: 100,
             variableAnchors: [
               ViewAnnotationAnchorConfig(
-                anchor: ViewAnnotationAnchor.BOTTOM_LEFT,
+                anchor: AnnotationAnchor.BOTTOM_LEFT,
                 offsetX: 0,
                 offsetY: 0,
               ),
@@ -150,7 +150,7 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
             height: 100,
             variableAnchors: [
               ViewAnnotationAnchorConfig(
-                anchor: ViewAnnotationAnchor.TOP_RIGHT,
+                anchor: AnnotationAnchor.TOP_RIGHT,
                 offsetX: 0,
                 offsetY: 0,
               ),
@@ -179,7 +179,7 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
 
         if (old?.variableAnchors?.isNotEmpty == true) {
           final anchor = old!.variableAnchors!.first!.anchor;
-          final values = ViewAnnotationAnchor.values.toList()
+          final values = AnnotationAnchor.values.toList()
             ..removeWhere((element) => element == anchor);
           config = ViewAnnotationAnchorConfig(
             anchor: values[random.nextInt(values.length)],
@@ -188,7 +188,7 @@ class ViewAnnotationPageBodyState extends State<ViewAnnotationPageBody> {
           );
         } else {
           config = ViewAnnotationAnchorConfig(
-            anchor: ViewAnnotationAnchor.TOP,
+            anchor: AnnotationAnchor.TOP,
             offsetX: 0,
             offsetY: 0,
           );

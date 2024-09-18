@@ -245,6 +245,15 @@ class MapboxMapController(
           result.success(byteArray)
         }
       }
+      "map#setSnapshotLegacyMode" -> {
+        val mapView = mapView
+        if (mapView == null) {
+          result.error("400", "Failed ti set snapshot legacy mode: map view is not found.", null)
+        } else {
+          val enable = call.argument<Boolean>("enable") ?: true
+          mapView.setSnapshotLegacyMode(enable)
+        }
+      }
       else -> {
         result.notImplemented()
       }

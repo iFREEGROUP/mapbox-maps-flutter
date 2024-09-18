@@ -62,7 +62,7 @@ enum class AnnotatedFeatureType(val raw: Int) {
   }
 }
 
-enum class ViewAnnotationAnchor(val raw: Int) {
+enum class FLTViewAnnotationAnchor(val raw: Int) {
   CENTER(0),
   TOP(1),
   LEFT(2),
@@ -74,7 +74,7 @@ enum class ViewAnnotationAnchor(val raw: Int) {
   BOTTOM_LEFT(8);
 
   companion object {
-    fun ofRaw(raw: Int): ViewAnnotationAnchor? {
+    fun ofRaw(raw: Int): FLTViewAnnotationAnchor? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -116,7 +116,7 @@ data class AnnotatedFeature(
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class ViewAnnotationAnchorConfig(
-  val anchor: ViewAnnotationAnchor,
+  val anchor: FLTViewAnnotationAnchor,
   val offsetX: Double,
   val offsetY: Double
 
@@ -124,7 +124,7 @@ data class ViewAnnotationAnchorConfig(
   companion object {
     @Suppress("UNCHECKED_CAST")
     fun fromList(list: List<Any?>): ViewAnnotationAnchorConfig {
-      val anchor = ViewAnnotationAnchor.ofRaw(list[0] as Int)!!
+      val anchor = FLTViewAnnotationAnchor.ofRaw(list[0] as Int)!!
       val offsetX = list[1] as Double
       val offsetY = list[2] as Double
       return ViewAnnotationAnchorConfig(anchor, offsetX, offsetY)

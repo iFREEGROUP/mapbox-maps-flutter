@@ -5,7 +5,7 @@ enum AnnotatedFeatureType {
   ANNOTATED_LAYER_FEATURE,
 }
 
-enum ViewAnnotationAnchor {
+enum AnnotationAnchor {
   CENTER,
   TOP,
   LEFT,
@@ -55,7 +55,7 @@ class ViewAnnotationAnchorConfig {
     required this.offsetY,
   });
 
-  ViewAnnotationAnchor anchor;
+  AnnotationAnchor anchor;
 
   double offsetX;
 
@@ -72,7 +72,7 @@ class ViewAnnotationAnchorConfig {
   static ViewAnnotationAnchorConfig decode(Object result) {
     result as List<Object?>;
     return ViewAnnotationAnchorConfig(
-      anchor: ViewAnnotationAnchor.values[result[0]! as int],
+      anchor: AnnotationAnchor.values[result[0]! as int],
       offsetX: result[1]! as double,
       offsetY: result[2]! as double,
     );

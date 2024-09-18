@@ -12,7 +12,6 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.StylePackError
 import com.mapbox.maps.applyDefaultParams
 import com.mapbox.maps.debugoptions.MapViewDebugOptions
-import com.mapbox.maps.extension.style.expressions.dsl.generated.min
 import com.mapbox.maps.extension.style.layers.properties.generated.ProjectionName
 import com.mapbox.maps.extension.style.light.LightPosition
 import com.mapbox.maps.extension.style.light.generated.ambientLight
@@ -62,12 +61,14 @@ fun com.mapbox.maps.GlyphsRasterizationMode.toFLTGlyphsRasterizationMode(): Glyp
     com.mapbox.maps.GlyphsRasterizationMode.ALL_GLYPHS_RASTERIZED_LOCALLY -> GlyphsRasterizationMode.ALL_GLYPHS_RASTERIZED_LOCALLY
   }
 }
+
 fun GlyphsRasterizationOptions.toGlyphsRasterizationOptions(): com.mapbox.maps.GlyphsRasterizationOptions {
   return com.mapbox.maps.GlyphsRasterizationOptions.Builder()
     .rasterizationMode(rasterizationMode.toGlyphsRasterizationMode())
     .fontFamily(fontFamily)
     .build()
 }
+
 fun MapSnapshotOptions.toSnapshotOptions(context: Context): com.mapbox.maps.MapSnapshotOptions {
   return com.mapbox.maps.MapSnapshotOptions.Builder()
     .size(size.toSize(context))
@@ -82,9 +83,11 @@ fun MapSnapshotOptions.toSnapshotOverlayOptions(): com.mapbox.maps.SnapshotOverl
     showAttributes = showsAttribution ?: true
   )
 }
+
 fun Size.toSize(context: Context): com.mapbox.maps.Size {
   return com.mapbox.maps.Size(width.toDevicePixels(context), height.toDevicePixels(context))
 }
+
 fun TileCoverOptions.toTileCoverOptions(): com.mapbox.maps.TileCoverOptions {
   return com.mapbox.maps.TileCoverOptions.Builder()
     .tileSize(tileSize?.toShort())
@@ -93,6 +96,7 @@ fun TileCoverOptions.toTileCoverOptions(): com.mapbox.maps.TileCoverOptions {
     .roundZoom(roundZoom)
     .build()
 }
+
 fun ModelScaleMode.toModelScaleMode(): com.mapbox.maps.plugin.ModelScaleMode {
   return when (this) {
     ModelScaleMode.VIEWPORT -> com.mapbox.maps.plugin.ModelScaleMode.VIEWPORT
@@ -118,6 +122,7 @@ fun StyleProjectionName.toProjectionName(): ProjectionName {
 fun StyleProjection.toProjection(): com.mapbox.maps.extension.style.projection.generated.Projection {
   return com.mapbox.maps.extension.style.projection.generated.Projection(name.toProjectionName())
 }
+
 fun TransitionOptions.toStyleTransition(): StyleTransition {
   val builder = StyleTransition.Builder()
   duration?.let {
@@ -129,12 +134,14 @@ fun TransitionOptions.toStyleTransition(): StyleTransition {
 
   return builder.build()
 }
+
 fun Anchor.toAnchor(): com.mapbox.maps.extension.style.layers.properties.generated.Anchor {
   return when (this) {
     Anchor.MAP -> com.mapbox.maps.extension.style.layers.properties.generated.Anchor.MAP
     Anchor.VIEWPORT -> com.mapbox.maps.extension.style.layers.properties.generated.Anchor.VIEWPORT
   }
 }
+
 fun FlatLight.toFlatLight(): com.mapbox.maps.extension.style.light.generated.FlatLight {
   return flatLight(id) {
     anchor?.let {
@@ -311,17 +318,21 @@ fun MbxEdgeInsets.toEdgeInsets(context: Context): EdgeInsets {
 }
 
 fun ScreenCoordinate.toScreenCoordinate(context: Context): com.mapbox.maps.ScreenCoordinate {
-  return com.mapbox.maps.ScreenCoordinate(x.toDevicePixels(context).toDouble(), y.toDevicePixels(context).toDouble())
+  return com.mapbox.maps.ScreenCoordinate(
+    x.toDevicePixels(context).toDouble(),
+    y.toDevicePixels(context).toDouble()
+  )
 }
 
-fun CameraOptions.toCameraOptions(context: Context): com.mapbox.maps.CameraOptions = com.mapbox.maps.CameraOptions.Builder()
-  .anchor(anchor?.toScreenCoordinate(context))
-  .bearing(bearing)
-  .center(center)
-  .padding(padding?.toEdgeInsets(context))
-  .zoom(zoom)
-  .pitch(pitch)
-  .build()
+fun CameraOptions.toCameraOptions(context: Context): com.mapbox.maps.CameraOptions =
+  com.mapbox.maps.CameraOptions.Builder()
+    .anchor(anchor?.toScreenCoordinate(context))
+    .bearing(bearing)
+    .center(center)
+    .padding(padding?.toEdgeInsets(context))
+    .zoom(zoom)
+    .pitch(pitch)
+    .build()
 
 fun ContextMode.toContextMode(): com.mapbox.maps.ContextMode {
   return when (this) {
@@ -353,6 +364,7 @@ fun NorthOrientation.toNorthOrientation(): com.mapbox.maps.NorthOrientation {
     NorthOrientation.RIGHTWARDS -> com.mapbox.maps.NorthOrientation.RIGHTWARDS
   }
 }
+
 fun MapOptions.toMapOptions(context: Context): com.mapbox.maps.MapOptions {
   val builder = com.mapbox.maps.MapOptions.Builder().applyDefaultParams(context)
 
@@ -452,16 +464,21 @@ fun com.mapbox.common.LoggingLevel.toFLTLoggingLevel(): LoggingLevel {
     com.mapbox.common.LoggingLevel.ERROR -> LoggingLevel.ERROR
   }
 }
+
 fun StyleTransition.toFLTTransitionOptions(): TransitionOptions {
   return TransitionOptions(delay, duration)
 }
+
 fun com.mapbox.maps.plugin.ModelScaleMode.toFLTModelScaleMode(): ModelScaleMode {
   return when (this) {
     com.mapbox.maps.plugin.ModelScaleMode.VIEWPORT -> ModelScaleMode.VIEWPORT
     com.mapbox.maps.plugin.ModelScaleMode.MAP -> ModelScaleMode.MAP
-    else -> { throw java.lang.RuntimeException("Scale mode not supported: $this") }
+    else -> {
+      throw java.lang.RuntimeException("Scale mode not supported: $this")
+    }
   }
 }
+
 fun com.mapbox.maps.StylePropertyValue.toFLTStylePropertyValue(): StylePropertyValue {
   return StylePropertyValue(value.toJson(), StylePropertyValueKind.values()[kind.ordinal])
 }
@@ -498,7 +515,12 @@ fun com.mapbox.maps.FeatureExtensionValue.toFLTFeatureExtensionValue(): FeatureE
 }
 
 fun com.mapbox.maps.QueriedFeature.toFLTQueriedFeature(): QueriedFeature {
-  return QueriedFeature(JSONObject(this.feature.toJson()).toMap(), source, sourceLayer, state.toJson())
+  return QueriedFeature(
+    JSONObject(this.feature.toJson()).toMap(),
+    source,
+    sourceLayer,
+    state.toJson()
+  )
 }
 
 fun com.mapbox.maps.QueriedRenderedFeature.toFLTQueriedRenderedFeature(): QueriedRenderedFeature {
@@ -518,7 +540,10 @@ fun com.mapbox.maps.MapDebugOptions.toFLTMapDebugOptions(): MapDebugOptions {
 }
 
 fun com.mapbox.maps.GlyphsRasterizationOptions.toFLTGlyphsRasterizationOptions(): GlyphsRasterizationOptions {
-  return GlyphsRasterizationOptions(GlyphsRasterizationMode.values()[rasterizationMode.ordinal], fontFamily)
+  return GlyphsRasterizationOptions(
+    GlyphsRasterizationMode.values()[rasterizationMode.ordinal],
+    fontFamily
+  )
 }
 
 fun com.mapbox.maps.MapOptions.toFLTMapOptions(context: Context): MapOptions {
@@ -805,8 +830,8 @@ fun com.mapbox.maps.ViewAnnotationAnchorConfig.toFLTViewAnnotationAnchorConfig()
   return ViewAnnotationAnchorConfig(anchor.toFLTViewAnnotationAnchor(), offsetX, offsetY)
 }
 
-fun com.mapbox.maps.ViewAnnotationAnchor.toFLTViewAnnotationAnchor(): ViewAnnotationAnchor {
-  val values = ViewAnnotationAnchor.values()
+fun com.mapbox.maps.ViewAnnotationAnchor.toFLTViewAnnotationAnchor(): FLTViewAnnotationAnchor {
+  val values = FLTViewAnnotationAnchor.values()
   return values[ordinal]
 }
 
@@ -838,7 +863,7 @@ fun ViewAnnotationAnchorConfig.toViewAnnotationAnchorConfig(): com.mapbox.maps.V
     .anchor(anchor.toViewAnnotationAnchor()).build()
 }
 
-fun ViewAnnotationAnchor.toViewAnnotationAnchor(): com.mapbox.maps.ViewAnnotationAnchor {
+fun FLTViewAnnotationAnchor.toViewAnnotationAnchor(): com.mapbox.maps.ViewAnnotationAnchor {
   return com.mapbox.maps.ViewAnnotationAnchor.values()[ordinal]
 }
 
