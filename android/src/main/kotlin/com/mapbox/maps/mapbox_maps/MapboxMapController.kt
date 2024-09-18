@@ -7,7 +7,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import com.mapbox.bindgen.Value
 import com.mapbox.common.SettingsServiceFactory
 import com.mapbox.common.SettingsServiceStorageType
@@ -27,6 +27,7 @@ import com.mapbox.maps.mapbox_maps.pigeons._AnimationManager
 import com.mapbox.maps.mapbox_maps.pigeons._CameraManager
 import com.mapbox.maps.mapbox_maps.pigeons._LocationComponentSettingsInterface
 import com.mapbox.maps.mapbox_maps.pigeons._MapInterface
+import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -73,6 +74,7 @@ class MapboxMapController(
   */
   private class LifecycleHelper(
     val parentLifecycle: Lifecycle,
+    val shouldDestroyOnDestroy: Boolean,
   ) : LifecycleOwner, DefaultLifecycleObserver {
 
     val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
@@ -81,9 +83,8 @@ class MapboxMapController(
       parentLifecycle.addObserver(this)
     }
 
-    override fun getLifecycle(): Lifecycle {
-      return lifecycleRegistry
-    }
+    override val lifecycle: Lifecycle
+      get() = lifecycleRegistry
 
     override fun onCreate(owner: LifecycleOwner) {
       lifecycleRegistry.currentState = Lifecycle.State.CREATED
@@ -105,20 +106,22 @@ class MapboxMapController(
       lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
 
-    override fun onDestroy(owner: LifecycleOwner) {
-      lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-    }
+    override fun onDestroy(owner: LifecycleOwner) = propagateDestroyEvent()
 
     fun dispose() {
       parentLifecycle.removeObserver(this)
-      // fires MapView.onStop
-      lifecycleRegistry.currentState = Lifecycle.State.CREATED
-      // fires MapView.onDestroy
-      lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+      propagateDestroyEvent()
+    }
+
+    private fun propagateDestroyEvent() {
+      lifecycleRegistry.currentState = when (shouldDestroyOnDestroy) {
+        true -> Lifecycle.State.DESTROYED
+        false -> Lifecycle.State.CREATED
+      }
     }
   }
 
-  private val lifecycleHelper: LifecycleHelper
+  private var lifecycleHelper: LifecycleHelper? = null
 
   init {
     val mapView = MapView(context, mapInitOptions)
@@ -129,7 +132,7 @@ class MapboxMapController(
     styleController = StyleController(context, mapboxMap)
     cameraController = CameraController(mapboxMap, context)
     projectionController = MapProjectionController(mapboxMap)
-    mapInterfaceController = MapInterfaceController(mapboxMap, context)
+    mapInterfaceController = MapInterfaceController(mapboxMap, mapView, context)
     animationController = AnimationController(mapboxMap, context)
     annotationController = AnnotationController(mapView)
     locationComponentController = LocationComponentController(mapView, context)
@@ -141,9 +144,6 @@ class MapboxMapController(
     viewAnnotationController = ViewAnnotationController(context, mapView)
 
     changeUserAgent(pluginVersion)
-
-    lifecycleHelper = LifecycleHelper(lifecycleProvider.getLifecycle()!!)
-    ViewTreeLifecycleOwner.set(mapView, lifecycleHelper)
 
     StyleManager.setUp(proxyBinaryMessenger, styleController)
     _CameraManager.setUp(proxyBinaryMessenger, cameraController)
@@ -167,11 +167,31 @@ class MapboxMapController(
     return mapView
   }
 
+  override fun onFlutterViewAttached(flutterView: View) {
+    super.onFlutterViewAttached(flutterView)
+    val context = flutterView.context
+    val shouldDestroyOnDestroy = when (context is FlutterActivity) {
+      true -> context.shouldDestroyEngineWithHost()
+      false -> true
+    }
+    lifecycleHelper = LifecycleHelper(lifecycleProvider.getLifecycle()!!, shouldDestroyOnDestroy)
+
+    mapView?.setViewTreeLifecycleOwner(lifecycleHelper)
+  }
+
+  override fun onFlutterViewDetached() {
+    super.onFlutterViewDetached()
+    lifecycleHelper?.dispose()
+    lifecycleHelper = null
+    mapView!!.setViewTreeLifecycleOwner(null)
+  }
+
   override fun dispose() {
     if (mapView == null) {
       return
     }
-    lifecycleHelper.dispose()
+    lifecycleHelper?.dispose()
+    lifecycleHelper = null
     mapView = null
     mapboxMap = null
     methodChannel.setMethodCallHandler(null)

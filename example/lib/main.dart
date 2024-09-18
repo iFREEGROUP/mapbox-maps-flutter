@@ -26,6 +26,7 @@ import 'point_annotations.dart';
 import 'projection.dart';
 import 'style.dart';
 import 'gestures.dart';
+import 'debug_options.dart';
 
 final List<ExamplePage> _allPages = <ExamplePage>[
   FullMapPage(),
@@ -51,6 +52,7 @@ final List<ExamplePage> _allPages = <ExamplePage>[
   TrafficRouteLinePage(),
   OfflineMapPage(),
   ModelLayerPage(),
+  DebugOptionsPage(),
   ViewAnnotationPage(),
 ];
 
