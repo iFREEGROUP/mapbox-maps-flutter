@@ -83,7 +83,7 @@ class MapWidget extends StatefulWidget {
   /// As a workaround default is true.
   final bool? textureView;
 
-  /// Controls the way the underlaying MapView is being hosted by Flutter on Android.
+  /// Controls the way the underlying MapView is being hosted by Flutter on Android.
   /// This setting has no effect on iOS.
   @experimental
   final AndroidPlatformViewHostingMode androidHostingMode;
@@ -185,7 +185,7 @@ class _MapWidgetState extends State<MapWidget> {
       'textureView': widget.textureView,
       'styleUri': widget.styleUri,
       'channelSuffix': _suffix,
-      'mapboxPluginVersion': '2.3.0-beta.1',
+      'mapboxPluginVersion': '2.3.0-rc.1',
       'eventTypes': _events.eventTypes.map((e) => e.index).toList(),
     };
 
