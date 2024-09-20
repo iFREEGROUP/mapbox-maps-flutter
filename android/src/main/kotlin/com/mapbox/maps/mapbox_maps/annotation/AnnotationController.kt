@@ -72,7 +72,7 @@ class AnnotationController(private val mapView: MapView) :
           this.addClickListener(
             com.mapbox.maps.plugin.annotation.generated.OnPolylineAnnotationClickListener { annotation ->
               onPolylineAnnotationController.onPolylineAnnotationClick(annotation.toFLTPolylineAnnotation()) {}
-              true
+              false
             }
           )
         }
