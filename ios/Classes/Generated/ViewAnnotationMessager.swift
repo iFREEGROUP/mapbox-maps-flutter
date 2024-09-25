@@ -48,7 +48,7 @@ enum AnnotatedFeatureType: Int {
   case aNNOTATEDLAYERFEATURE = 1
 }
 
-enum ViewAnnotationAnchor: Int {
+enum FLTViewAnnotationAnchor: Int {
   case cENTER = 0
   case tOP = 1
   case lEFT = 2
@@ -89,12 +89,12 @@ struct AnnotatedFeature {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct ViewAnnotationAnchorConfig {
-  var anchor: ViewAnnotationAnchor
+  var anchor: FLTViewAnnotationAnchor
   var offsetX: Double
   var offsetY: Double
 
   static func fromList(_ list: [Any?]) -> ViewAnnotationAnchorConfig? {
-    let anchor = ViewAnnotationAnchor(rawValue: list[0] as! Int)!
+    let anchor = FLTViewAnnotationAnchor(rawValue: list[0] as! Int)!
     let offsetX = list[1] as! Double
     let offsetY = list[2] as! Double
 

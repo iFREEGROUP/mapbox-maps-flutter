@@ -1140,28 +1140,28 @@ extension ViewAnnotationAnchorConfig {
 
 extension MapboxMaps.ViewAnnotationAnchorConfig {
     func toFLTViewAnnotationAnchorConfig() -> ViewAnnotationAnchorConfig {
-        var viewAnchor: ViewAnnotationAnchor
+        var viewAnchor: FLTViewAnnotationAnchor
         switch anchor {
         case .center:
-            viewAnchor = ViewAnnotationAnchor.cENTER
+            viewAnchor = FLTViewAnnotationAnchor.cENTER
         case .top:
-            viewAnchor = ViewAnnotationAnchor.tOP
+            viewAnchor = FLTViewAnnotationAnchor.tOP
         case .left:
-            viewAnchor = ViewAnnotationAnchor.lEFT
+            viewAnchor = FLTViewAnnotationAnchor.lEFT
         case .bottom:
-            viewAnchor = ViewAnnotationAnchor.bOTTOM
+            viewAnchor = FLTViewAnnotationAnchor.bOTTOM
         case .right:
-            viewAnchor = ViewAnnotationAnchor.rIGHT
+            viewAnchor = FLTViewAnnotationAnchor.rIGHT
         case .topLeft:
-            viewAnchor = ViewAnnotationAnchor.tOPLEFT
+            viewAnchor = FLTViewAnnotationAnchor.tOPLEFT
         case .bottomRight:
-            viewAnchor = ViewAnnotationAnchor.bOTTOMRIGHT
+            viewAnchor = FLTViewAnnotationAnchor.bOTTOMRIGHT
         case .topRight:
-            viewAnchor = ViewAnnotationAnchor.tOPRIGHT
+            viewAnchor = FLTViewAnnotationAnchor.tOPRIGHT
         case .bottomLeft:
-            viewAnchor = ViewAnnotationAnchor.bOTTOMLEFT
+            viewAnchor = FLTViewAnnotationAnchor.bOTTOMLEFT
         @unknown default:
-            viewAnchor = ViewAnnotationAnchor.cENTER
+            viewAnchor = FLTViewAnnotationAnchor.cENTER
         }
         return ViewAnnotationAnchorConfig(anchor: viewAnchor, offsetX: offsetX, offsetY: offsetY)
     }
