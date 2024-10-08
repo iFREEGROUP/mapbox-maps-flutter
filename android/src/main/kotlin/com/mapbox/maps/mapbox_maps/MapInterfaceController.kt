@@ -16,7 +16,6 @@ import com.mapbox.maps.mapbox_maps.pigeons.MapOptions
 import com.mapbox.maps.mapbox_maps.pigeons.NorthOrientation
 import com.mapbox.maps.mapbox_maps.pigeons.QueriedRenderedFeature
 import com.mapbox.maps.mapbox_maps.pigeons.QueriedSourceFeature
-import com.mapbox.maps.mapbox_maps.pigeons.RenderedQueryGeometry
 import com.mapbox.maps.mapbox_maps.pigeons.RenderedQueryOptions
 import com.mapbox.maps.mapbox_maps.pigeons.Size
 import com.mapbox.maps.mapbox_maps.pigeons.SourceQueryOptions
@@ -25,7 +24,8 @@ import com.mapbox.maps.mapbox_maps.pigeons.TileCacheBudgetInTiles
 import com.mapbox.maps.mapbox_maps.pigeons.TileCoverOptions
 import com.mapbox.maps.mapbox_maps.pigeons.ViewportMode
 import com.mapbox.maps.mapbox_maps.pigeons._MapInterface
-import com.mapbox.maps.mapbox_maps.pigeons._MapWidgetDebugOptionsBox
+import com.mapbox.maps.mapbox_maps.pigeons._MapWidgetDebugOptions
+import com.mapbox.maps.mapbox_maps.pigeons._RenderedQueryGeometry
 import com.mapbox.maps.plugin.delegates.listeners.OnMapLoadErrorListener
 
 class MapInterfaceController(
@@ -123,14 +123,14 @@ class MapInterfaceController(
     return mapboxMap.getMapOptions().toFLTMapOptions(context)
   }
 
-  override fun getDebugOptions(): List<_MapWidgetDebugOptionsBox?> {
+  override fun getDebugOptions(): List<_MapWidgetDebugOptions> {
     return mapView.debugOptions.mapNotNull { nativeOption ->
-      nativeOption.toFLTDebugOptions()?.let { _MapWidgetDebugOptionsBox(it) }
+      nativeOption.toFLTDebugOptions()
     }
   }
 
-  override fun setDebugOptions(debugOptions: List<_MapWidgetDebugOptionsBox>) {
-    mapView.debugOptions = debugOptions.map { it.option.toMapViewDebugOptions() }.toSet()
+  override fun setDebugOptions(debugOptions: List<_MapWidgetDebugOptions>) {
+    mapView.debugOptions = debugOptions.map { it.toMapViewDebugOptions() }.toSet()
   }
 
   override fun getDebug(): List<MapDebugOptions> {
@@ -142,7 +142,7 @@ class MapInterfaceController(
   }
 
   override fun queryRenderedFeatures(
-    geometry: RenderedQueryGeometry,
+    geometry: _RenderedQueryGeometry,
     options: RenderedQueryOptions,
     callback: (Result<List<QueriedRenderedFeature?>>) -> Unit
   ) {

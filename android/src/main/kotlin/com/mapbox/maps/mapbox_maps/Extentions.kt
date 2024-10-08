@@ -242,7 +242,7 @@ fun SourceQueryOptions.toSourceQueryOptions(): com.mapbox.maps.SourceQueryOption
   return com.mapbox.maps.SourceQueryOptions(sourceLayerIds, filter.toValue())
 }
 
-fun RenderedQueryGeometry.toRenderedQueryGeometry(context: Context): com.mapbox.maps.RenderedQueryGeometry {
+fun _RenderedQueryGeometry.toRenderedQueryGeometry(context: Context): com.mapbox.maps.RenderedQueryGeometry {
   return when (type) {
     Type.SCREEN_BOX -> com.mapbox.maps.RenderedQueryGeometry.valueOf(
       Gson().fromJson(
